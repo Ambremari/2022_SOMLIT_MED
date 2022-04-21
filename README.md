@@ -9,6 +9,8 @@ faisant partie du réseau SOMLIT (Banyuls, Marseille et Villefranche).
 
 Preprocessing.R permet d'extraire et de mettre en forme les données nécessaires aux analyses statistiques
 
+Regression.R réalise les régressions quadratiques locales avec noyau gaussien pour les séries temporelles des données brutes, avec l'intervalle de confiance à 95% obtenus à partir d'une approximation de Taylor d'ordre 2, et construit les figures associées. 
+
 ### Données
 
 Les données sont issues du site du Service d’Observation en Milieu Littoral (https://www.somlit.fr/)
