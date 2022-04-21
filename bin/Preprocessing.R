@@ -73,7 +73,7 @@ dat_diff <- na.omit(dat_diff)
 write.csv(dat_diff, "2022_SOMLIT_MED/data/data_piconano_diff.csv")
 
 ###data CTD###
-data_CTD <-  read_delim("wkdir/data/2022-02/Somlit_Extraction_ctd_20220207_090643_e4fb36b102d70d7a.csv", 
+data_CTD <-  read_delim("Somlit_Extraction_ctd_20220207_090643_e4fb36b102d70d7a.csv", 
                         delim = ";", 
                         escape_double = FALSE, 
                         trim_ws = TRUE, 
