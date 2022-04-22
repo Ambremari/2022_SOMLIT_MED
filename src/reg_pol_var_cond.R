@@ -24,7 +24,6 @@ var_cond <- function(Xech, yech, h, p, a, sigma, k=1e-2){
     mv <- mv*sigma[i]
     mat_var <- cbind(mat_var, mv)
   }
-  mat_var <- array(mat_var, dim=c(p+1, p+1, m))
-  cat("Matrices de variance conditionelle", p+1, "x", p+1, "pour", m, "x")
+  mat_var <- array(mat_var, dim=c(p+1, p+1, m)) #Matrices de variance conditionelle p+1 x p+1 pour m x
   return(Mat_var=mat_var)
 }

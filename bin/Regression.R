@@ -82,17 +82,85 @@ plot_reg_CI <- function(data, site, group, variable){
   my_plot <- data %>% ggplot() + 
     geom_ribbon(aes(DATE, ymin=exp(CI_low), ymax=exp(CI_up)), alpha=.6, fill='grey') +
     geom_line(aes(DATE, VARIABLE), col=my_palette[2], size=.8) +
-    theme_light() + ylab(variable) + xlab('') + 
+    theme_light() + ylab(variable) + xlab('Temps') + 
     ggtitle(paste(site, group, sep=" - "))
   return(my_plot)
 }
 
 ###compute regression###
-#data <- read.csv("data/PICONANO_AB.csv")
+data <- read.csv("data/PICONANO_AB.csv")
+
+##BANYULS
 #export <- reg_CI(data, site=10, group='CRYC', variable='ABONDANCE', h=40, pilot_h=25)
 #write.csv(export, "results/cry_ab_banyuls.csv", row.names=FALSE)
+#export <- reg_CI(data, site=10, group='SYNC', variable='ABONDANCE', h=40, pilot_h=25)
+#write.csv(export, "results/syn_ab_banyuls.csv", row.names=FALSE)
+#export <- reg_CI(data, site=10, group='PROC', variable='ABONDANCE', h=40, pilot_h=25)
+#write.csv(export, "results/pro_ab_banyuls.csv", row.names=FALSE)
+#export <- reg_CI(data, site=10, group='PICOEC', variable='ABONDANCE', h=40, pilot_h=25)
+#write.csv(export, "results/picoe_ab_banyuls.csv", row.names=FALSE)
+#export <- reg_CI(data, site=10, group='NANOEC', variable='ABONDANCE', h=40, pilot_h=25)
+#write.csv(export, "results/nanoe_ab_banyuls.csv", row.names=FALSE)
+
+##MARSEILLE
+#export <- reg_CI(data, site=11, group='CRYC', variable='ABONDANCE', h=40, pilot_h=23)
+#write.csv(export, "results/cry_ab_marseille.csv", row.names=FALSE)
+#export <- reg_CI(data, site=11, group='SYNC', variable='ABONDANCE', h=40, pilot_h=23)
+#write.csv(export, "results/syn_ab_marseille.csv", row.names=FALSE)
+#export <- reg_CI(data, site=11, group='PROC', variable='ABONDANCE', h=40, pilot_h=23)
+#write.csv(export, "results/pro_ab_marseille.csv", row.names=FALSE)
+#export <- reg_CI(data, site=11, group='PICOEC', variable='ABONDANCE', h=40, pilot_h=23)
+#write.csv(export, "results/picoe_ab_marseille.csv", row.names=FALSE)
+#export <- reg_CI(data, site=11, group='NANOEC', variable='ABONDANCE', h=40, pilot_h=23)
+#write.csv(export, "results/nanoe_ab_marseille.csv", row.names=FALSE)
+
+##VILLEFRANCHE
+#export <- reg_CI(data, site=12, group='CRYC', variable='ABONDANCE', h=40, pilot_h=19.5)
+#write.csv(export, "results/cry_ab_villefranche.csv", row.names=FALSE)
+#export <- reg_CI(data, site=12, group='SYNC', variable='ABONDANCE', h=40, pilot_h=19.5)
+#write.csv(export, "results/syn_ab_villefranche.csv", row.names=FALSE)
+#export <- reg_CI(data, site=12, group='PROC', variable='ABONDANCE', h=40, pilot_h=19.5)
+#write.csv(export, "results/pro_ab_villefranche.csv", row.names=FALSE)
+#export <- reg_CI(data, site=12, group='PICOEC', variable='ABONDANCE', h=40, pilot_h=19.5)
+#write.csv(export, "results/picoe_ab_villefranche.csv", row.names=FALSE)
+#export <- reg_CI(data, site=12, group='NANOEC', variable='ABONDANCE', h=40, pilot_h=19.5)
+#write.csv(export, "results/nanoe_ab_villefranche.csv", row.names=FALSE)
+
 
 ###plot regression###
 data <- read.csv("results/TS_CRY_AB_BANYULS.csv")
-my_plot <- plot_reg_CI(data, 'Banyuls', 'Cryptophytes', 'Abondance (cellules/mL)')
-my_plot
+cry_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Cryptophytes', 'Abondance (cellules/mL)')
+data <- read.csv("results/TS_SYN_AB_BANYULS.csv")
+syn_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Synechococcus', 'Abondance (cellules/mL)')
+data <- read.csv("results/TS_PRO_AB_BANYULS.csv")
+pro_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Prochlorococcus', 'Abondance (cellules/mL)') + 
+  scale_y_continuous(limits=c(-1, 3e4))
+data <- read.csv("results/TS_PICOE_AB_BANYULS.csv")
+picoe_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Pico-eucaryotes', 'Abondance (cellules/mL)') + 
+  scale_y_continuous(limits=c(-1, 3e4))
+data <- read.csv("results/TS_NANOE_AB_BANYULS.csv")
+nanoe_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Nano-eucaryotes', 'Abondance (cellules/mL)') +  
+  scale_y_continuous(limits=c(-1, 6e3))
+
+data <- read.csv("results/TS_CRY_AB_MARSEILLE.csv")
+cry_ab_mar <- plot_reg_CI(data, 'Marseille', 'Cryptophytes', 'Abondance (cellules/mL)') + 
+  scale_y_continuous(limits=c(-1, 1.2e3))
+data <- read.csv("results/TS_SYN_AB_MARSEILLE.csv")
+syn_ab_mar <- plot_reg_CI(data, 'Marseille', 'Synechococcus', 'Abondance (cellules/mL)')
+data <- read.csv("results/TS_PRO_AB_MARSEILLE.csv")
+pro_ab_mar <- plot_reg_CI(data, 'Marseille', 'Prochlorococcus', 'Abondance (cellules/mL)')
+data <- read.csv("results/TS_PICOE_AB_MARSEILLE.csv")
+picoe_ab_mar <- plot_reg_CI(data, 'Marseille', 'Pico-eucaryotes', 'Abondance (cellules/mL)')
+data <- read.csv("results/TS_NANOE_AB_MARSEILLE.csv")
+nanoe_ab_mar <- plot_reg_CI(data, 'Marseille', 'Nano-eucaryotes', 'Abondance (cellules/mL)') 
+
+data <- read.csv("results/TS_CRY_AB_VILLEFRANCHE.csv")
+cry_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Cryptophytes', 'Abondance (cellules/mL)')
+data <- read.csv("results/TS_SYN_AB_VILLEFRANCHE.csv")
+syn_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Synechococcus', 'Abondance (cellules/mL)')
+data <- read.csv("results/TS_PRO_AB_VILLEFRANCHE.csv")
+pro_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Prochlorococcus', 'Abondance (cellules/mL)')
+data <- read.csv("results/TS_PICOE_AB_VILLEFRANCHE.csv")
+picoe_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Pico-eucaryotes', 'Abondance (cellules/mL)')
+data <- read.csv("results/TS_NANOE_AB_VILLEFRANCHE.csv")
+nanoe_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Nano-eucaryotes', 'Abondance (cellules/mL)') 
