@@ -1,2 +1,5 @@
 #R history
 *.Rhistory
+
+#images for the report
+img/
