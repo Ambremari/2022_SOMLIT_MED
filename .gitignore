@@ -3,3 +3,11 @@
 
 #images for the report
 img/
+
+#latex related files
+*.aux
+*.lot
+*.log
+*.lof
+*.toc
+*.gz
