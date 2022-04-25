@@ -37,10 +37,14 @@ plot_var <- function(data, col_name, variable, protocole=NULL, out=NULL){
   protocole <- ymd(protocole)
   my_plot <- data %>% ggplot(aes_string("DATE", col_name)) + 
     geom_point(alpha=.6) +
-    geom_point(data=out, aes_string("DATE", col_name), col='red', alpha=.7) +
-    geom_vline(xintercept = protocole, linetype='dashed', col=my_palette[3], size=.75) +
+    geom_point(data=out, aes_string("DATE", col_name), col='red', alpha=.9) +
+    geom_vline(xintercept = protocole, linetype='dashed', col=my_palette[3], size=.6) +
     geom_vline(xintercept = ymd('2012-01-01'), linetype='dashed', col=my_palette[2], size=.5, alpha=.7) +
-    theme_light() + xlab('Temps') + ylab(variable)
+    theme_light() + xlab('Temps') + ylab(variable) + 
+    theme(axis.text=element_text(size=12),
+          axis.title=element_text(size=14),
+          strip.text.x = element_text(size = 14),
+          plot.title = element_text(size=16))
   return(my_plot)
 }
 plot_ser <- function(data, col_name, variable){
@@ -84,7 +88,7 @@ if(sum(checkpt)!=length(checkpt)){stop("Error in bottom value")}
 out_tf <- hydro_bot %>% filter(ID_SITE=="Villefranche" & DATE<ymd("2003-01-01"))
 out_ts <- hydro_surf %>% filter(ID_SITE=="Villefranche" & DATE<ymd("2003-01-01"))
 t_f <- plot_var(hydro_bot, 'T', 'Température dans le fond(°C)', out=out_tf) + 
-  facet_wrap(.~ID_SITE)
+  facet_wrap(.~ID_SITE) 
 t_s <- plot_var(hydro_surf, 'T', 'Température en surface(°C)', out=out_ts) + 
   facet_wrap(.~ID_SITE)
 ggarrange(t_f, t_s, nrow=2)
@@ -102,7 +106,7 @@ flrs <- plot_ser(piconano_m, "SYNFLR", "Auto-fluorescence rouge") + ggtitle("")
 flos <- plot_ser(piconano_m, "SYNFLO", "Auto-fluorescence orange") + ggtitle("")
 ggarrange(abc, diffc, flrc, floc, abs, diffs, flrs, flos, nrow=2, ncol=4)
 
-
+##diffusion and fluo
 phyto_diff <- c("CRYSSC", 'SYNSSC', 'PROSSC',  
                 'PICOESSC', 'NANOESSC')
 phyto_fluo <- c("CRYFLR", 'SYNFLR', 'PROFLR', 'PICOEFLR', 'NANOEFLR')
@@ -112,12 +116,16 @@ dat_diff <- data_piconano %>% dplyr::select("X", phyto_diff) %>%
   pivot_longer(phyto_diff, names_to='GROUPE', values_to='DIFF')
 data_phyto <- cbind(dat_diff, "FLUO"=dat_fluo$FLUO)
 data_phyto %>% ggplot() + 
-  geom_point(aes(FLUO, DIFF, col=GROUPE), alpha=.6) +
+  geom_point(aes(FLUO, DIFF, col=GROUPE), size=2, alpha=.6) +
   theme_light() + scale_y_log10() + scale_x_log10() + 
   scale_color_manual(values=my_palette, name='Groupe',
                      labels=c("Cryptophytes", "Nano-eucaryotes", "Pico-eucaryotes", 
                               "Prochlorococcus", "Synechococcus")) + xlab('Auto-fluroresence rouge') +
-  ylab('Diffusion lumineuse')
+  ylab('Diffusion lumineuse') +
+  theme(legend.text = element_text(size=13),
+        legend.title = element_text(size=14),
+        axis.text=element_text(size=12),
+        axis.title=element_text(size=14))
 
 
 

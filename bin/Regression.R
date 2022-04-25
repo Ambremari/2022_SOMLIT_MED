@@ -10,6 +10,7 @@ setwd("C:/Users/precym-guest/Dropbox/2022_stageM2_COUTEYEN/2022_SOMLIT_MED")
 ###packages### 
 library(tidyverse)
 library(lubridate)
+library(latex2exp)
 
 ###source code###
 source("src/my_palette.R")
@@ -21,7 +22,7 @@ source("src/reg_pol_var_cond.R")
 ###function to compute regression and CI###
 
 #site as ID_SITE, group as value and variable as column name
-reg_CI <- function(data, site, group, variable, h, pilot_h){
+reg_CI <- function(data, site, group=NULL, variable, h, pilot_h, start='1995-01-01'){
   p <- 2 #regression order
   a <- 1 #taylor approx order
   if(is.null(group)==TRUE){
@@ -31,8 +32,11 @@ reg_CI <- function(data, site, group, variable, h, pilot_h){
     df <- data %>% filter(ID_SITE==site & GROUPE==group & PROF_TEXT=='S')
     }
   df <- df %>% dplyr::select("DATE", variable)
+  df <- na.omit(df)
   #date to time vector
+  start <- ymd(start)
   df$DATE <- ymd(df$DATE)
+  df <- df %>% filter(DATE>start)
   T0 <- df$DATE[1]
   xech <- as.numeric(df$DATE-T0)
   #values to log to avoid negative approx
@@ -79,8 +83,10 @@ plot_reg_CI <- function(data, site, group, variable){
   colnames(data)[3] <- "VARIABLE"
   #turn log value to original value
   data$VARIABLE <- exp(data$VARIABLE)-1
+  data$CI_low <- exp(data$CI_low)-1
+  data$CI_up <- exp(data$CI_up)-1
   my_plot <- data %>% ggplot() + 
-    geom_ribbon(aes(DATE, ymin=exp(CI_low), ymax=exp(CI_up)), alpha=.6, fill='grey') +
+    geom_ribbon(aes(DATE, ymin=CI_low, ymax=CI_up), alpha=.6, fill='grey') +
     geom_line(aes(DATE, VARIABLE), col=my_palette[2], size=.8) +
     theme_light() + ylab(variable) + xlab('Temps') + 
     ggtitle(paste(site, group, sep=" - "))
@@ -88,8 +94,8 @@ plot_reg_CI <- function(data, site, group, variable){
 }
 
 ###compute regression###
+###ABUNDANCE
 data <- read.csv("data/PICONANO_AB.csv")
-
 ##BANYULS
 #export <- reg_CI(data, site=10, group='CRYC', variable='ABONDANCE', h=40, pilot_h=25)
 #write.csv(export, "results/cry_ab_banyuls.csv", row.names=FALSE)
@@ -126,8 +132,35 @@ data <- read.csv("data/PICONANO_AB.csv")
 #export <- reg_CI(data, site=12, group='NANOEC', variable='ABONDANCE', h=40, pilot_h=19.5)
 #write.csv(export, "results/nanoe_ab_villefranche.csv", row.names=FALSE)
 
+###NUTRIENTS
+data <- read.csv("data/HYDRO.csv")
+##BANYULS
+#export <- reg_CI(data, site=10, variable='NH4', h=40, pilot_h=21, start='2011-09-01')
+#write.csv(export, "results/nh4_banyuls.csv", row.names=FALSE)
+#export <- reg_CI(data, site=10, variable='NO3', h=40, pilot_h=21, start='2011-11-22')
+#write.csv(export, "results/no3_banyuls.csv", row.names=FALSE)
+#export <- reg_CI(data, site=10, variable='NO2', h=40, pilot_h=18, start='2011-11-22')
+#write.csv(export, "results/no2_banyuls.csv", row.names=FALSE)
+#export <- reg_CI(data, site=10, variable='PO4', h=33, pilot_h=19, start='2011-11-22')
+#write.csv(export, "results/po4_banyuls.csv", row.names=FALSE)
+#export <- reg_CI(data, site=10, variable='SIOH4', h=33, pilot_h=19, start='2011-11-22')
+#write.csv(export, "results/sioh4_banyuls.csv", row.names=FALSE)
+
+##MARSEILLE
+export <- reg_CI(data, site=11, variable='NH4', h=40, pilot_h=21, start='2011-09-01')
+write.csv(export, "results/nh4_marseille.csv", row.names=FALSE)
+export <- reg_CI(data, site=11, variable='NO3', h=40, pilot_h=21, start='2011-11-22')
+write.csv(export, "results/no3_marseille.csv", row.names=FALSE)
+export <- reg_CI(data, site=11, variable='NO2', h=40, pilot_h=21, start='2011-11-22')
+write.csv(export, "results/no2_marseille.csv", row.names=FALSE)
+export <- reg_CI(data, site=11, variable='PO4', h=40, pilot_h=21, start='2011-11-22')
+write.csv(export, "results/po4_marseille.csv", row.names=FALSE)
+export <- reg_CI(data, site=11, variable='SIOH4', h=40, pilot_h=21, start='2011-11-22')
+write.csv(export, "results/sioh4_marseille.csv", row.names=FALSE)
+
 
 ###plot regression###
+#abundance
 data <- read.csv("results/TS_CRY_AB_BANYULS.csv")
 cry_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Cryptophytes', 'Abondance (cellules/mL)')
 data <- read.csv("results/TS_SYN_AB_BANYULS.csv")
@@ -164,3 +197,18 @@ data <- read.csv("results/TS_PICOE_AB_VILLEFRANCHE.csv")
 picoe_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Pico-eucaryotes', 'Abondance (cellules/mL)')
 data <- read.csv("results/TS_NANOE_AB_VILLEFRANCHE.csv")
 nanoe_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Nano-eucaryotes', 'Abondance (cellules/mL)') 
+
+#nutrients
+data <- read.csv("results/TS_NH4_BANYULS.csv")
+nh4_ban <- plot_reg_CI(data, 'Banyuls', TeX('$NH_4$'), TeX('Concentration $(\\mu M)$')) + 
+  scale_y_continuous(limits=c(-0.01, 0.3))
+data <- read.csv("results/TS_NO3_BANYULS.csv")
+no3_ban <- plot_reg_CI(data, 'Banyuls', TeX('$NO_3$'), TeX('Concentration $(\\mu M)$'))
+data <- read.csv("results/TS_NO2_BANYULS.csv")
+no2_ban <- plot_reg_CI(data, 'Banyuls', TeX('$NO_2$'), TeX('Concentration $(\\mu M)$')) 
+data <- read.csv("results/TS_PO4_BANYULS.csv")
+po4_ban <- plot_reg_CI(data, 'Banyuls', TeX('$PO_4$'), TeX('Concentration $(\\mu M)$')) + 
+  scale_y_continuous(limits=c(-0.01, 0.3))
+data <- read.csv("results/sioh4_banyuls.csv")
+sioh4_ban <- plot_reg_CI(data, 'Banyuls', TeX('$Si(OH)_4$'), TeX('Concentration $(\\mu M)$')) + 
+  scale_y_continuous(limits=c(-0.01, 12))
