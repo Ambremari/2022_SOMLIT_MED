@@ -83,8 +83,14 @@ plot_reg_CI <- function(data, site, group, variable){
   colnames(data)[3] <- "VARIABLE"
   #turn log value to original value
   data$VARIABLE <- exp(data$VARIABLE)-1
+  neg_reg <- which(data$VARIABLE < 0)
+  data$VARIABLE[neg_reg] <- 0
   data$CI_low <- exp(data$CI_low)-1
+  neg <- which(data$CI_low < 0)
+  data$CI_low[neg] <- 0
   data$CI_up <- exp(data$CI_up)-1
+  neg_up <- which(data$CI_up < 0)
+  data$CI_up[neg_up] <- 0
   my_plot <- data %>% ggplot() + 
     geom_ribbon(aes(DATE, ymin=CI_low, ymax=CI_up), alpha=.6, fill='grey') +
     geom_line(aes(DATE, VARIABLE), col=my_palette[2], size=.8) +
@@ -133,30 +139,30 @@ data <- read.csv("data/PICONANO_AB.csv")
 #write.csv(export, "results/nanoe_ab_villefranche.csv", row.names=FALSE)
 
 ###NUTRIENTS
-data <- read.csv("data/HYDRO.csv")
+data_hydro <- read.csv("data/HYDRO.csv")
 ##BANYULS
-#export <- reg_CI(data, site=10, variable='NH4', h=40, pilot_h=21, start='2011-09-01')
+#export <- reg_CI(data_hydro, site=10, variable='NH4', h=40, pilot_h=21, start='2011-09-01')
 #write.csv(export, "results/nh4_banyuls.csv", row.names=FALSE)
-#export <- reg_CI(data, site=10, variable='NO3', h=40, pilot_h=21, start='2011-11-22')
+#export <- reg_CI(data_hydro, site=10, variable='NO3', h=40, pilot_h=21, start='2011-11-22')
 #write.csv(export, "results/no3_banyuls.csv", row.names=FALSE)
-#export <- reg_CI(data, site=10, variable='NO2', h=40, pilot_h=18, start='2011-11-22')
+#export <- reg_CI(data_hydro, site=10, variable='NO2', h=40, pilot_h=18, start='2011-11-22')
 #write.csv(export, "results/no2_banyuls.csv", row.names=FALSE)
-#export <- reg_CI(data, site=10, variable='PO4', h=33, pilot_h=19, start='2011-11-22')
+#export <- reg_CI(data_hydro, site=10, variable='PO4', h=33, pilot_h=19, start='2011-11-22')
 #write.csv(export, "results/po4_banyuls.csv", row.names=FALSE)
-#export <- reg_CI(data, site=10, variable='SIOH4', h=33, pilot_h=19, start='2011-11-22')
+#export <- reg_CI(data_hydro, site=10, variable='SIOH4', h=33, pilot_h=19, start='2011-11-22')
 #write.csv(export, "results/sioh4_banyuls.csv", row.names=FALSE)
 
 ##MARSEILLE
-export <- reg_CI(data, site=11, variable='NH4', h=40, pilot_h=21, start='2011-09-01')
-write.csv(export, "results/nh4_marseille.csv", row.names=FALSE)
-export <- reg_CI(data, site=11, variable='NO3', h=40, pilot_h=21, start='2011-11-22')
-write.csv(export, "results/no3_marseille.csv", row.names=FALSE)
-export <- reg_CI(data, site=11, variable='NO2', h=40, pilot_h=21, start='2011-11-22')
-write.csv(export, "results/no2_marseille.csv", row.names=FALSE)
-export <- reg_CI(data, site=11, variable='PO4', h=40, pilot_h=21, start='2011-11-22')
-write.csv(export, "results/po4_marseille.csv", row.names=FALSE)
-export <- reg_CI(data, site=11, variable='SIOH4', h=40, pilot_h=21, start='2011-11-22')
-write.csv(export, "results/sioh4_marseille.csv", row.names=FALSE)
+#export <- reg_CI(data_hydro, site=11, variable='NH4', h=45, pilot_h=21, start='2011-09-01')
+#write.csv(export, "results/nh4_marseille.csv", row.names=FALSE)
+#export <- reg_CI(data_hydro, site=11, variable='NO3', h=45, pilot_h=20, start='2011-11-22')
+#write.csv(export, "results/no3_marseille.csv", row.names=FALSE)
+#export <- reg_CI(data_hydro, site=11, variable='NO2', h=40, pilot_h=21, start='2011-11-22')
+#write.csv(export, "results/no2_marseille.csv", row.names=FALSE)
+#export <- reg_CI(data_hydro, site=11, variable='PO4', h=40, pilot_h=18.5, start='2011-11-22')
+#write.csv(export, "results/po4_marseille.csv", row.names=FALSE)
+#export <- reg_CI(data_hydro, site=11, variable='SIOH4', h=40, pilot_h=21, start='2011-11-22')
+#write.csv(export, "results/sioh4_marseille.csv", row.names=FALSE)
 
 
 ###plot regression###
@@ -209,6 +215,17 @@ no2_ban <- plot_reg_CI(data, 'Banyuls', TeX('$NO_2$'), TeX('Concentration $(\\mu
 data <- read.csv("results/TS_PO4_BANYULS.csv")
 po4_ban <- plot_reg_CI(data, 'Banyuls', TeX('$PO_4$'), TeX('Concentration $(\\mu M)$')) + 
   scale_y_continuous(limits=c(-0.01, 0.3))
-data <- read.csv("results/sioh4_banyuls.csv")
+data <- read.csv("results/TS_SIOH4_BANYULS.csv")
 sioh4_ban <- plot_reg_CI(data, 'Banyuls', TeX('$Si(OH)_4$'), TeX('Concentration $(\\mu M)$')) + 
   scale_y_continuous(limits=c(-0.01, 12))
+
+data <- read.csv("results/TS_NH4_MARSEILLE.csv")
+nh4_mar <- plot_reg_CI(data, 'Marseille', TeX('$NH_4$'), TeX('Concentration $(\\mu M)$'))
+data <- read.csv("results/TS_NO3_MARSEILLE.csv")
+no3_mar <- plot_reg_CI(data, 'Marseille', TeX('$NO_3$'), TeX('Concentration $(\\mu M)$'))
+data <- read.csv("results/TS_NO2_MARSEILLE.csv")
+no2_mar <- plot_reg_CI(data, 'Marseille', TeX('$NO_2$'), TeX('Concentration $(\\mu M)$')) 
+data <- read.csv("results/TS_PO4_MARSEILLE.csv")
+po4_mar <- plot_reg_CI(data, 'Marseille', TeX('$PO_4$'), TeX('Concentration $(\\mu M)$'))
+data <- read.csv("results/TS_SIOH4_MARSEILLE.csv")
+sioh4_mar <- plot_reg_CI(data, 'Marseille', TeX('$Si(OH)_4$'), TeX('Concentration $(\\mu M)$')) 
