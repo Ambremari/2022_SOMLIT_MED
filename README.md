@@ -11,6 +11,8 @@ Preprocessing.R permet d'extraire et de mettre en forme les données nécessaire
 
 Regression.R réalise les régressions quadratiques locales avec noyau gaussien pour les séries temporelles des données brutes, avec l'intervalle de confiance à 95% obtenus à partir d'une approximation de Taylor d'ordre 2, et construit les figures associées. 
 
+Decomposition.R permet de réaliser une décomposition MSTL des régressions, de supprimer la corrélation linéaire des résidus induite par suréchantillonnage et de visualiser la série décomposée, les résidus décorrélés, l'ACF des résidus et l'histogramme des résidus.  
+
 ### Données
 
 Les données sont issues du site du Service d’Observation en Milieu Littoral (https://www.somlit.fr/)
