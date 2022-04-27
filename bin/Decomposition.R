@@ -15,6 +15,59 @@ library(forecast)
 ###source code###
 source("src/my_palette.R")
 
+###plot periodogram function###
+plot_period <- function(data, variable, site, var_name, sp=NULL, k=c(1,1), tp=0.5, K){
+  data$DATE <- ymd(data$DATE)
+  ystart <- year(data$DATE[1])
+  dstart <- yday(data$DATE[1])
+  var <- data %>% dplyr::select(variable)
+  my_ts <- ts(var, start=c(ystart, dstart), frequency=365)
+  my_tsc <- my_ts-mean(my_ts) #centering
+  n <- length(my_tsc)
+  Per <- Mod(fft(my_tsc))^2/n
+  freq <- (1:n -1)/n*365
+  kern <- kernel("modified.daniell", k)
+  my_per <- mvspec(my_ts, kernel=kern, taper=tp, plot=FALSE)
+  alpha <- 0.5/K
+  bdw <- round(my_per$bandwidth, 1)
+  dgf <- round(my_per$df, 3)
+  Lh <- round(my_per$Lh, 1)
+  U <- qchisq(alpha/2, 2*Lh)
+  L <- qchisq(1-alpha/2, 2*Lh)
+  fun_per <- splinefun(my_per$freq, my_per$spec)
+  x <- seq(0.1,5,0.001)
+  dfun <-  fun_per(x, deriv=1)
+  bd <- 0.3
+  Roots <- NULL
+  low <- 0.11
+  upp <- bd
+  while(length(Roots)<K){
+    root <- uniroot(splinefun(x, dfun), c(low,upp), extendInt="yes")$root
+    root <- round(root, 2)
+    if(root %in% Roots==FALSE & root>0.12 & root<3.5 & fun_per(root, deriv=2)<0)
+      Roots <- c(Roots, root)
+    low <- upp
+    upp <- upp+bd
+  }
+  CI_up <- 2*Lh*fun_per(Roots)/U
+  CI_low <- 2*Lh*fun_per(Roots)/L
+  par(mfrow=c(2,1), mar=c(3,2.1,1.5,0.5), mgp=c(1.2,0.5,0), cex.lab=.8, cex.axis=.7)
+  plot.new()
+  grid(lty=1)
+  par(new=TRUE)
+  plot(freq, Per, type='o', xlab='Fréquence', 
+       ylab='Périodogramme', lwd=1, xlim=c(0,6))
+  plot.new()
+  grid(lty=1)
+  par(new=TRUE)
+  plot(my_per$freq, my_per$spec, type='l', xlim=c(0,6), 
+       xlab='Frequence', ylab='Periodogramme moyen', 
+       main=paste(site, "-", var_name, sp, ", fenetre = ", bdw))
+  abline(h=CI_low, lty=2, col=2:(K+1))
+  legend("topright", lty=2, legend = Roots, col=2:(K+1))
+  }
+
+
 ###MSTL function###
 my_mstl <- function(data, variable, frequency, seasons, sw, tw){
   my_start <- decimal_date(ymd(data$DATE[1]))
@@ -112,4 +165,11 @@ plot_decomp <- function(res, fit_df, seasons, site, variable, sp=NULL){
   return(my_plot)
 }
   
-
+data <- read.csv("results/TS_CRY_AB_MARSEILLE.csv")
+plot_period(data, 'ABONDANCE', 'Marseille', 'Abondance', 'Cryptophytes', K=3)
+fit <- my_mstl(data, 'ABONDANCE', 352, 352, 11, 15)
+res <- res_decor(fit, 9)
+x11()
+plot_decomp(res, fit, 352, 'Marseille', 'Abondance', 'Cryptophytes')
+x11()
+plot(fit$Seasonal352 + fit$Remainder, type='l')
