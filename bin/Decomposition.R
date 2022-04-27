@@ -11,6 +11,7 @@ setwd("C:/Users/precym-guest/Dropbox/2022_stageM2_COUTEYEN/2022_SOMLIT_MED")
 library(tidyverse)
 library(lubridate)
 library(forecast)
+library(latex2exp)
 
 ###source code###
 source("src/my_palette.R")
@@ -91,7 +92,7 @@ my_mstl <- function(data, variable, frequency, seasons, sw, tw){
 
 ###Decorrelation plot###
 plot_cor <- function(data){
-  tau <- 0:30
+  tau <- 0:25
   RHO <- NULL
   for(i in tau){
     n <- nrow(data)
@@ -106,7 +107,8 @@ plot_cor <- function(data){
   my_plot <- corr %>% ggplot() + geom_point(aes(LAG, RHO)) +
     geom_hline(yintercept=-0.087, col='red', linetype='dashed') +
     geom_hline(yintercept=0.087, col='red', linetype='dashed') +
-    theme_light() + scale_x_continuous(breaks=seq(0, 60, 1), expand=c(0,0))
+    theme_light() + scale_x_continuous(breaks=seq(0, 60, 1), expand=c(0,0)) +
+    ylab(TeX('$\\rho$')) + xlab('Lag')
   return(my_plot)
 }
 
@@ -189,6 +191,7 @@ plot_decomp <- function(res, fit_df, seasons, site, variable, sp=NULL){
 data <- read.csv("results/TS_CRY_AB_MARSEILLE.csv")
 plot_period(data, 'ABONDANCE', 'Marseille', 'Abondance', 'Cryptophytes', K=3)
 fit <- my_mstl(data, 'ABONDANCE', 352, 352, 11, 15)
+plot_cor(fit)
 res <- res_decor(fit, 9)
 x11()
 plot_decomp(res, fit, 352, 'Marseille', 'Abondance', 'Cryptophytes')
