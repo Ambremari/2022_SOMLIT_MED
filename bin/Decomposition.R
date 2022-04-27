@@ -89,6 +89,27 @@ my_mstl <- function(data, variable, frequency, seasons, sw, tw){
   return(fit_df)
 }
 
+###Decorrelation plot###
+plot_cor <- function(data){
+  tau <- 0:30
+  RHO <- NULL
+  for(i in tau){
+    n <- nrow(data)
+    end <- n-i
+    start <- 1+i
+    xt <- data$Remainder[1:end] #x(t)
+    xtt <- data$Remainder[start:n]
+    rho <- cor(xt, xtt)
+    RHO <- c(RHO, rho)
+  }
+  corr <- data.frame("LAG"=tau, "RHO"=RHO)
+  my_plot <- corr %>% ggplot() + geom_point(aes(LAG, RHO)) +
+    geom_hline(yintercept=-0.087, col='red', linetype='dashed') +
+    geom_hline(yintercept=0.087, col='red', linetype='dashed') +
+    theme_light() + scale_x_continuous(breaks=seq(0, 60, 1), expand=c(0,0))
+  return(my_plot)
+}
+
 ###Decorrelation function###
 res_decor <- function(data, K){
   n <- nrow(data)
