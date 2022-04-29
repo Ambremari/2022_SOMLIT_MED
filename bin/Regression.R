@@ -101,42 +101,81 @@ plot_reg_CI <- function(data, site, group, variable){
 
 ###compute regression###
 ###ABUNDANCE
-data <- read.csv("data/PICONANO_AB.csv")
+data_piconano <- read.csv("data/PICONANO_AB.csv")
 ##BANYULS
-#export <- reg_CI(data, site=10, group='CRYC', variable='ABONDANCE', h=40, pilot_h=25)
+#export <- reg_CI(data_piconano, site=10, group='CRYC', variable='ABONDANCE', h=40, pilot_h=25)
 #write.csv(export, "results/cry_ab_banyuls.csv", row.names=FALSE)
-#export <- reg_CI(data, site=10, group='SYNC', variable='ABONDANCE', h=40, pilot_h=25)
+#export <- reg_CI(data_piconano, site=10, group='SYNC', variable='ABONDANCE', h=40, pilot_h=25)
 #write.csv(export, "results/syn_ab_banyuls.csv", row.names=FALSE)
-#export <- reg_CI(data, site=10, group='PROC', variable='ABONDANCE', h=40, pilot_h=25)
+#export <- reg_CI(data_piconano, site=10, group='PROC', variable='ABONDANCE', h=40, pilot_h=25)
 #write.csv(export, "results/pro_ab_banyuls.csv", row.names=FALSE)
-#export <- reg_CI(data, site=10, group='PICOEC', variable='ABONDANCE', h=40, pilot_h=25)
+#export <- reg_CI(data_piconano, site=10, group='PICOEC', variable='ABONDANCE', h=40, pilot_h=25)
 #write.csv(export, "results/picoe_ab_banyuls.csv", row.names=FALSE)
-#export <- reg_CI(data, site=10, group='NANOEC', variable='ABONDANCE', h=40, pilot_h=25)
+#export <- reg_CI(data_piconano, site=10, group='NANOEC', variable='ABONDANCE', h=40, pilot_h=25)
 #write.csv(export, "results/nanoe_ab_banyuls.csv", row.names=FALSE)
 
 ##MARSEILLE
-#export <- reg_CI(data, site=11, group='CRYC', variable='ABONDANCE', h=40, pilot_h=23)
+#export <- reg_CI(data_piconano, site=11, group='CRYC', variable='ABONDANCE', h=40, pilot_h=23)
 #write.csv(export, "results/cry_ab_marseille.csv", row.names=FALSE)
-#export <- reg_CI(data, site=11, group='SYNC', variable='ABONDANCE', h=40, pilot_h=23)
+#export <- reg_CI(data_piconano, site=11, group='SYNC', variable='ABONDANCE', h=40, pilot_h=23)
 #write.csv(export, "results/syn_ab_marseille.csv", row.names=FALSE)
-#export <- reg_CI(data, site=11, group='PROC', variable='ABONDANCE', h=40, pilot_h=23)
+#export <- reg_CI(data_piconano, site=11, group='PROC', variable='ABONDANCE', h=40, pilot_h=23)
 #write.csv(export, "results/pro_ab_marseille.csv", row.names=FALSE)
-#export <- reg_CI(data, site=11, group='PICOEC', variable='ABONDANCE', h=40, pilot_h=23)
+#export <- reg_CI(data_piconano, site=11, group='PICOEC', variable='ABONDANCE', h=40, pilot_h=23)
 #write.csv(export, "results/picoe_ab_marseille.csv", row.names=FALSE)
-#export <- reg_CI(data, site=11, group='NANOEC', variable='ABONDANCE', h=40, pilot_h=23)
+#export <- reg_CI(data_piconano, site=11, group='NANOEC', variable='ABONDANCE', h=40, pilot_h=23)
 #write.csv(export, "results/nanoe_ab_marseille.csv", row.names=FALSE)
 
 ##VILLEFRANCHE
-#export <- reg_CI(data, site=12, group='CRYC', variable='ABONDANCE', h=40, pilot_h=19.5)
+#export <- reg_CI(data_piconano, site=12, group='CRYC', variable='ABONDANCE', h=40, pilot_h=19.5)
 #write.csv(export, "results/cry_ab_villefranche.csv", row.names=FALSE)
-#export <- reg_CI(data, site=12, group='SYNC', variable='ABONDANCE', h=40, pilot_h=19.5)
+#export <- reg_CI(data_piconano, site=12, group='SYNC', variable='ABONDANCE', h=40, pilot_h=19.5)
 #write.csv(export, "results/syn_ab_villefranche.csv", row.names=FALSE)
-#export <- reg_CI(data, site=12, group='PROC', variable='ABONDANCE', h=40, pilot_h=19.5)
+#export <- reg_CI(data_piconano, site=12, group='PROC', variable='ABONDANCE', h=40, pilot_h=19.5)
 #write.csv(export, "results/pro_ab_villefranche.csv", row.names=FALSE)
-#export <- reg_CI(data, site=12, group='PICOEC', variable='ABONDANCE', h=40, pilot_h=19.5)
+#export <- reg_CI(data_piconano, site=12, group='PICOEC', variable='ABONDANCE', h=40, pilot_h=19.5)
 #write.csv(export, "results/picoe_ab_villefranche.csv", row.names=FALSE)
-#export <- reg_CI(data, site=12, group='NANOEC', variable='ABONDANCE', h=40, pilot_h=19.5)
+#export <- reg_CI(data_piconano, site=12, group='NANOEC', variable='ABONDANCE', h=40, pilot_h=19.5)
 #write.csv(export, "results/nanoe_ab_villefranche.csv", row.names=FALSE)
+
+###DIFFUSION
+data_piconano <- read.csv("data/PICONANO_DIFF.csv")
+##BANYULS
+#export <- reg_CI(data_piconano, site=10, group='CRYSSC', variable='DIFFUSION', h=40, pilot_h=23)
+#write.csv(export, "results/cry_diff_banyuls.csv", row.names=FALSE)
+#export <- reg_CI(data_piconano, site=10, group='SYNSSC', variable='DIFFUSION', h=40, pilot_h=24)
+#write.csv(export, "results/syn_diff_banyuls.csv", row.names=FALSE)
+#export <- reg_CI(data_piconano, site=10, group='PROSSC', variable='DIFFUSION', h=35, pilot_h=30)
+#write.csv(export, "results/pro_diff_banyuls.csv", row.names=FALSE)
+#export <- reg_CI(data_piconano, site=10, group='PICOESSC', variable='DIFFUSION', h=40, pilot_h=23)
+#write.csv(export, "results/picoe_diff_banyuls.csv", row.names=FALSE)
+#export <- reg_CI(data_piconano, site=10, group='NANOESSC', variable='DIFFUSION', h=40, pilot_h=25)
+#write.csv(export, "results/nanoe_diff_banyuls.csv", row.names=FALSE)
+
+##MARSEILLE
+#export <- reg_CI(data_piconano, site=11, group='CRYSSC', variable='DIFFUSION', h=40, pilot_h=23)
+#write.csv(export, "results/cry_diff_marseille.csv", row.names=FALSE)
+#export <- reg_CI(data_piconano, site=11, group='SYNSSC', variable='DIFFUSION', h=40, pilot_h=23)
+#write.csv(export, "results/syn_diff_marseille.csv", row.names=FALSE)
+#export <- reg_CI(data_piconano, site=11, group='PROSSC', variable='DIFFUSION', h=40, pilot_h=23)
+#write.csv(export, "results/pro_diff_marseille.csv", row.names=FALSE)
+#export <- reg_CI(data_piconano, site=11, group='PICOESSC', variable='DIFFUSION', h=40, pilot_h=23)
+#write.csv(export, "results/picoe_diff_marseille.csv", row.names=FALSE)
+#export <- reg_CI(data_piconano, site=11, group='NANOESSC', variable='DIFFUSION', h=40, pilot_h=18)
+#write.csv(export, "results/nanoe_diff_marseille.csv", row.names=FALSE)
+
+##VILLEFRANCHE
+#export <- reg_CI(data_piconano, site=12, group='CRYSSC', variable='DIFFUSION', h=40, pilot_h=19.5)
+#write.csv(export, "results/cry_diff_villefranche.csv", row.names=FALSE)
+#export <- reg_CI(data_piconano, site=12, group='SYNSSC', variable='DIFFUSION', h=40, pilot_h=19.5)
+#write.csv(export, "results/syn_diff_villefranche.csv", row.names=FALSE)
+#export <- reg_CI(data_piconano, site=12, group='PROSSC', variable='DIFFUSION', h=30, pilot_h=22)
+#write.csv(export, "results/pro_diff_villefranche.csv", row.names=FALSE)
+#export <- reg_CI(data_piconano, site=12, group='PICOESSC', variable='DIFFUSION', h=40, pilot_h=19.5)
+#write.csv(export, "results/picoe_diff_villefranche.csv", row.names=FALSE)
+#export <- reg_CI(data_piconano, site=12, group='NANOESSC', variable='DIFFUSION', h=40, pilot_h=19.5)
+#write.csv(export, "results/nanoe_diff_villefranche.csv", row.names=FALSE)
+
 
 ###NUTRIENTS
 data_hydro <- read.csv("data/HYDRO.csv")
@@ -164,9 +203,36 @@ data_hydro <- read.csv("data/HYDRO.csv")
 #export <- reg_CI(data_hydro, site=11, variable='SIOH4', h=40, pilot_h=21, start='2011-11-22')
 #write.csv(export, "results/sioh4_marseille.csv", row.names=FALSE)
 
+##VILLEFRANCHE
+#export <- reg_CI(data_hydro, site=12, variable='NH4', h=45, pilot_h=18, start='2011-09-01')
+#write.csv(export, "results/nh4_villefranche.csv", row.names=FALSE)
+#export <- reg_CI(data_hydro, site=12, variable='NO3', h=40, pilot_h=18, start='2011-11-22')
+#write.csv(export, "results/no3_villefranche.csv", row.names=FALSE)
+#export <- reg_CI(data_hydro, site=12, variable='NO2', h=30, pilot_h=17, start='2011-11-22')
+#write.csv(export, "results/no2_villefranche.csv", row.names=FALSE)
+#export <- reg_CI(data_hydro, site=12, variable='PO4', h=35, pilot_h=18, start='2011-11-22')
+#write.csv(export, "results/po4_villefranche.csv", row.names=FALSE)
+#export <- reg_CI(data_hydro, site=12, variable='SIOH4', h=40, pilot_h=21, start='2011-11-22')
+#write.csv(export, "results/sioh4_villefranche.csv", row.names=FALSE)
+                                                                                                                
+
+###BIOMASS
+##BANYULS
+#export <- reg_CI(data_hydro, site=10, variable='CHLA', h=40, pilot_h=21, start="2007-11-20")
+#write.csv(export, "results/chla_banyuls.csv", row.names=FALSE)
+
+##MARSEILLE
+#export <- reg_CI(data_hydro, site=11, variable='CHLA', h=40, pilot_h=21, start="2007-11-20")
+#write.csv(export, "results/chla_marseille.csv", row.names=FALSE)
+
+
+##VILLEFRANCHE
+export <- reg_CI(data_hydro, site=12, variable='CHLA', h=35, pilot_h=21, start="2007-11-20")
+write.csv(export, "results/chla_villefranche.csv", row.names=FALSE)
+
 
 ###plot regression###
-#abundance
+#abundance 
 data <- read.csv("results/TS_CRY_AB_BANYULS.csv")
 cry_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Cryptophytes', 'Abondance (cellules/mL)')
 data <- read.csv("results/TS_SYN_AB_BANYULS.csv")
@@ -204,6 +270,44 @@ picoe_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Pico-eucaryotes', 'Abondance 
 data <- read.csv("results/TS_NANOE_AB_VILLEFRANCHE.csv")
 nanoe_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Nano-eucaryotes', 'Abondance (cellules/mL)') 
 
+#diffusion
+data <- read.csv("results/TS_CRY_DIFF_BANYULS.csv")
+cry_diff_ban <- plot_reg_CI(data, 'Banyuls', 'Cryptophytes', 'Diffusion lumineuse') + 
+  scale_y_continuous(limits=c(0, 150))
+data <- read.csv("results/TS_SYN_DIFF_BANYULS.csv")
+syn_diff_ban <- plot_reg_CI(data, 'Banyuls', 'Synechococcus', 'Diffusion lumineuse')
+data <- read.csv("results/TS_PRO_DIFF_BANYULS.csv")
+pro_diff_ban <- plot_reg_CI(data, 'Banyuls', 'Prochlorococcus', 'Diffusion lumineuse') + 
+  scale_y_continuous(limits=c(0, .25))
+data <- read.csv("results/TS_PICOE_DIFF_BANYULS.csv")
+picoe_diff_ban <- plot_reg_CI(data, 'Banyuls', 'Pico-eucaryotes', 'Diffusion lumineuse') 
+data <- read.csv("results/TS_NANOE_DIFF_BANYULS.csv")
+nanoe_diff_ban <- plot_reg_CI(data, 'Banyuls', 'Nano-eucaryotes', 'Diffusion lumineuse')  
+  scale_y_continuous(limits=c(-1, 6e3))
+
+data <- read.csv("results/TS_CRY_DIFF_MARSEILLE.csv")
+cry_diff_mar <- plot_reg_CI(data, 'Marseille', 'Cryptophytes', 'Diffusion lumineuse') 
+data <- read.csv("results/TS_SYN_DIFF_MARSEILLE.csv")
+syn_diff_mar <- plot_reg_CI(data, 'Marseille', 'Synechococcus', 'Diffusion lumineuse')
+data <- read.csv("results/TS_PRO_DIFF_MARSEILLE.csv")
+pro_diff_mar <- plot_reg_CI(data, 'Marseille', 'Prochlorococcus', 'Diffusion lumineuse')
+data <- read.csv("results/TS_PICOE_DIFF_MARSEILLE.csv")
+picoe_diff_mar <- plot_reg_CI(data, 'Marseille', 'Pico-eucaryotes', 'Diffusion lumineuse')
+data <- read.csv("results/TS_NANOE_DIFF_MARSEILLE.csv")
+nanoe_diff_mar <- plot_reg_CI(data, 'Marseille', 'Nano-eucaryotes', 'Diffusion lumineuse') 
+
+data <- read.csv("results/TS_CRY_DIFF_VILLEFRANCHE.csv")
+cry_diff_vil <- plot_reg_CI(data, 'Villefranche', 'Cryptophytes', 'Diffusion lumineuse')
+data <- read.csv("results/TS_SYN_DIFF_VILLEFRANCHE.csv")
+syn_diff_vil <- plot_reg_CI(data, 'Villefranche', 'Synechococcus', 'Diffusion lumineuse')
+data <- read.csv("results/TS_PRO_DIFF_VILLEFRANCHE.csv")
+pro_diff_vil <- plot_reg_CI(data, 'Villefranche', 'Prochlorococcus', 'Diffusion lumineuse')
+data <- read.csv("results/TS_PICOE_DIFF_VILLEFRANCHE.csv")
+picoe_diff_vil <- plot_reg_CI(data, 'Villefranche', 'Pico-eucaryotes', 'Diffusion lumineuse')
+data <- read.csv("results/TS_NANOE_DIFF_VILLEFRANCHE.csv")
+nanoe_diff_vil <- plot_reg_CI(data, 'Villefranche', 'Nano-eucaryotes', 'Diffusion lumineuse') 
+
+
 #nutrients
 data <- read.csv("results/TS_NH4_BANYULS.csv")
 nh4_ban <- plot_reg_CI(data, 'Banyuls', TeX('$NH_4$'), TeX('Concentration $(\\mu M)$')) + 
@@ -229,3 +333,23 @@ data <- read.csv("results/TS_PO4_MARSEILLE.csv")
 po4_mar <- plot_reg_CI(data, 'Marseille', TeX('$PO_4$'), TeX('Concentration $(\\mu M)$'))
 data <- read.csv("results/TS_SIOH4_MARSEILLE.csv")
 sioh4_mar <- plot_reg_CI(data, 'Marseille', TeX('$Si(OH)_4$'), TeX('Concentration $(\\mu M)$')) 
+
+data <- read.csv("results/TS_NH4_VILLEFRANCHE.csv")
+nh4_vil <- plot_reg_CI(data, 'Villefranche', TeX('$NH_4$'), TeX('Concentration $(\\mu M)$'))
+data <- read.csv("results/TS_NO3_VILLEFRANCHE.csv")
+no3_vil <- plot_reg_CI(data, 'Villefranche', TeX('$NO_3$'), TeX('Concentration $(\\mu M)$'))
+data <- read.csv("results/TS_NO2_VILLEFRANCHE.csv")
+no2_vil <- plot_reg_CI(data, 'Villefranche', TeX('$NO_2$'), TeX('Concentration $(\\mu M)$')) 
+data <- read.csv("results/TS_PO4_VILLEFRANCHE.csv")
+po4_vil <- plot_reg_CI(data, 'Villefranche', TeX('$PO_4$'), TeX('Concentration $(\\mu M)$'))
+data <- read.csv("results/TS_SIOH4_VILLEFRANCHE.csv")
+sioh4_vil <- plot_reg_CI(data, 'Villefranche', TeX('$Si(OH)_4$'), TeX('Concentration $(\\mu M)$')) 
+
+##biomass
+data <- read.csv("results/TS_CHLA_BANYULS.csv")
+chla_ban <- plot_reg_CI(data, 'Banyuls', 'Chlorophylle a', TeX('Concentration $(\\mu g/L)$'))
+data <- read.csv("results/TS_CHLA_MARSEILLE.csv")
+chla_mar <- plot_reg_CI(data, 'Marseille', 'Chlorophylle a', TeX('Concentration $(\\mu g/L)$'))
+data <- read.csv("results/chla_villefranche.csv")
+chla_vil <- plot_reg_CI(data, 'Villefranche', 'Chlorophylle a', TeX('Concentration $(\\mu g/L)$'))
+
