@@ -1,6 +1,9 @@
 #R history
 .Rhistory
 
+#output datasets
+results/
+
 #images for the report
 img/
 
