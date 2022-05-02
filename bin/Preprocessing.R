@@ -13,7 +13,7 @@ library(naniar)
 library(readr)
 
 ###data hydro###
-data_hydro <- read_delim("Somlit_Extraction_hydro_20220119_101038_ea59590fd8323e08.csv",
+data_hydro <- read_delim("wkdir/data/2022-02/Somlit_Extraction_hydro_20220119_101038_ea59590fd8323e08.csv",
                          delim = ";", 
                          escape_double = FALSE, 
                          trim_ws = TRUE, 
@@ -27,7 +27,21 @@ data_hydro <- data_hydro %>%
   replace_with_na_all(condition = ~.x == 999999)
 
 #save data
-write.csv(data_hydro, "2022_SOMLIT_MED/data/data_hydro.csv")
+#write.csv(data_hydro, "2022_SOMLIT_MED/data/data_hydro.csv")
+
+###nutreints data###
+nutrients <- c("NH4", "NO3", "NO2", "PO4", "SIOH4")
+nutri <- data_hydro %>% dplyr:: select(nutrients)
+dat_nutri <- cbind(data_hydro[,1:10], nutri)
+data_nutri$DATE <- ymd(dat_nutri$DATE)
+dat_nutri <- dat_nutri %>% filter(DATE>'2012-01-01')
+#wide to tidy format
+dat_nutri <- dat_nutri %>% pivot_longer(11:15, names_to="GROUPE", values_to="CONCENTRATION")
+#remove NA
+dat_nutri <- na.omit(dat_nutri)
+#save data
+write.csv(dat_nutri, "2022_SOMLIT_MED/data/data_nutri.csv")
+
 
 ###data piconano###
 data_piconano <- read_delim("Somlit_Extraction_piconano_20220103_163454_9635947c39fb31ba.csv", 
