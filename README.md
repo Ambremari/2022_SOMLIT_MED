@@ -13,6 +13,13 @@ Regression.R réalise les régressions quadratiques locales avec noyau gaussien 
 
 Decomposition.R permet de réaliser une décomposition MSTL des régressions, de supprimer la corrélation linéaire des résidus induite par suréchantillonnage et de visualiser le périodogramme de la série, la série décomposée, la corrélation linéaire des résidus, les résidus décorrélés, l'ACF des résidus et l'histogramme des résidus.  
 
+FPCA.R réalise une ACP fonctionnelle pour les unités annuelles d'Abondance, de Diffusion et des Nutriments pour les trois stations. Les courbes lissées sont obtenues à partir des moyennes mensuelles des observations. Si toutes les moyennes mensuelles ne sont pas disponibles pour une année, celle-ci n'est pas prise en compte. Les trois premières composantes principales sont représentées comme perturbation de la moyenne. Les scores des deux premières composantes principales sont également représentés. 
+
+FPCA_sparse.R réalise une ACP fonctionnelle pour les unités annuelles d'Abondance, de Diffusion et des Nutriments pour les trois stations. Les courbes lissées sont obtenues à partir des moyennes mensuelles des observations. Si toutes les moyennes mensuelles ne sont pas disponibles pour une année, celle-ci est quand même prise en compte. Les trois premières composantes principales sont représentées comme perturbation de la moyenne. Les scores des deux premières composantes principales sont également représentés. 
+
+FDA.R réalise une analyse factorielle discriminante des trois premières composantes principales obtenues par l'ACP fonctionnelle pour l'abondance de chaque groupe ou la concentration de chaque nutriment, en fonction du site. Elle permet de visualiser les scores des individus, les scores des variables et la contribution des variables pour chaque axe.
+
+
 ### Données
 
 Les données sont issues du site du Service d’Observation en Milieu Littoral (https://www.somlit.fr/)
