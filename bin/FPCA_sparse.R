@@ -198,7 +198,7 @@ my_fpca <- function(y_mat, all_info, variable, sp=NULL, year_lab=FALSE, nutri=FA
                 vjust="inward", hjust="inward")}
   my_plot <- ggarrange(plot_pert, NULL, plot_score, nrow=1, 
                        widths=c(1, 0.1, 1.2))
-  return(my_plot)
+  return(list("data"=my_df, "plot"=my_plot))
 }  
 
 ###load raw data###
@@ -247,10 +247,14 @@ fpca_syn <- my_fpca(ymat_ab, info_ab, 'Abondance', sp='SYNC', year_lab=TRUE, nor
 fpca_picoe <- my_fpca(ymat_ab, info_ab, 'Abondance', sp='PICOEC', year_lab=TRUE, norm=FALSE)
 fpca_nanoe <- my_fpca(ymat_ab, info_ab, 'Abondance', sp='NANOEC', year_lab=TRUE, norm=FALSE)
 fpca_other <- my_fpca(ymat_ab, info_ab, 'Abondance', sp=c('SYNC', 'PICOEC', 'NANOEC'), year_lab=TRUE)
-fpca_picoe
-fpca_cry
-
-
+fpca_picoe$plot
+fpca_cry$plot
+export_fpca_ab <- rbind(fpca_cry$data, fpca_syn$data, fpca_picoe$data,
+                        fpca_nanoe$data, fpca_pro$data)
+export_fpca_ab <- export_fpca_ab %>% 
+  pivot_wider(names_from = GROUPE,
+              values_from = c(PC1, PC2, PC3))
+write.csv(export_fpca_ab, "results/PC_AB.csv", row.names=FALSE)
 
 ###fpca on nutrients###
 out1 <- which(info_nutri$GROUPE=='NH4' & 
@@ -273,9 +277,16 @@ fpca_P <- my_fpca(ymat_nutri, info_nutri, 'Concentration', sp='PO4',
                   year_lab=TRUE, nutri=TRUE, norm=FALSE)
 fpca_S <- my_fpca(ymat_nutri, info_nutri, 'Concentration', sp='SIOH4', 
                   year_lab=TRUE, nutri=TRUE, norm=FALSE)
-fpca_NH4
-fpca_NO3
-fpca_P
+export_fpca_nutri <- rbind(fpca_NH4$data, fpca_NO3$data, fpca_NO2$data,
+                        fpca_S$data, fpca_P$data)
+export_fpca_nutri <- export_fpca_nutri %>% 
+  pivot_wider(names_from = GROUPE,
+              values_from = c(PC1, PC2, PC3))
+write.csv(export_fpca_nutri, "results/PC_NUTRI.csv", row.names=FALSE)
+
+fpca_NH4$plot
+fpca_NO3$plot
+fpca_P$plot
 
 ###fpca on diffusion###
 fpca_diff <- my_fpca(ymat_diff, info_diff, 'Diffusion')
@@ -284,4 +295,11 @@ fpca_dpro <- my_fpca(ymat_diff, info_diff, 'Diffusion', sp='PROSSC', year_lab=TR
 fpca_dsyn <- my_fpca(ymat_diff, info_diff, 'Diffusion', sp='SYNSSC', year_lab=TRUE, norm=FALSE)
 fpca_dpicoe <- my_fpca(ymat_diff, info_diff, 'Diffusion', sp='PICOESSC', year_lab=TRUE, norm=FALSE)
 fpca_dnanoe <- my_fpca(ymat_diff, info_diff, 'Diffusion', sp='NANOESSC', year_lab=TRUE, norm=FALSE)
-fpca_dnanoe
+fpca_dnanoe$plot
+export_fpca_diff <- rbind(fpca_dcry$data, fpca_dsyn$data, fpca_dpicoe$data,
+                        fpca_dnanoe$data, fpca_dpro$data)
+export_fpca_diff <- export_fpca_diff %>% 
+  pivot_wider(names_from = GROUPE,
+              values_from = c(PC1, PC2, PC3))
+write.csv(export_fpca_diff, "results/PC_DIFF.csv", row.names=FALSE)
+
