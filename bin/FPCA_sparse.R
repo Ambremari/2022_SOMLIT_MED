@@ -119,7 +119,10 @@ my_fpca <- function(y_mat, all_info, variable, sp=NULL, year_lab=FALSE, nutri=FA
   pc1_pi <- round(facp$lambda[1]/sum(facp$lambda)*100, 2)
   pc2_pi <- round(facp$lambda[2]/sum(facp$lambda)*100, 2)
   pc3_pi <- round(facp$lambda[3]/sum(facp$lambda)*100, 2)
-  inertia <- c(pc1_pi, pc2_pi, pc3_pi)
+  ##Components weights for fda
+  k2 <- sqrt(facp$lambda[2]/facp$lambda[1])
+  k3 <- sqrt(facp$lambda[3]/facp$lambda[1])
+  weights <- c(1, k2, k3)
   ##PC as mean perturbation
   xx <- facp$workGrid
   mean <- facp$mu
@@ -199,7 +202,7 @@ my_fpca <- function(y_mat, all_info, variable, sp=NULL, year_lab=FALSE, nutri=FA
                 vjust="inward", hjust="inward")}
   my_plot <- ggarrange(plot_pert, NULL, plot_score, nrow=1, 
                        widths=c(1, 0.1, 1.2))
-  return(list("data"=my_df, "plot"=my_plot, "inertia"=inertia))
+  return(list("data"=my_df, "plot"=my_plot, 'weights'=weights))
 }  
 
 ###load raw data###
@@ -255,26 +258,22 @@ fpca_cry$plot
 export_fpca_ab <- rbind(fpca_cry$data, fpca_syn$data, fpca_picoe$data,
                         fpca_nanoe$data, fpca_pro$data)
 ##check inertia >5% 
-ab_inertia <- data.frame('GROUPE'=c(rep('Cryptophytes', 3),
+ab_weight <- data.frame('GROUPE'=c(rep('Cryptophytes', 3),
                                     rep('Synechococcus', 3),
                                     rep('Pico-eucaryotes', 3),
                                     rep('Nano-eucaryotes', 3),
                                     rep('Prochlorococcus', 3)),
                          'PC'=rep(c('PC1', 'PC2', 'PC3'), 5),
-                         'INERTIA'=c(fpca_cry$inertia, fpca_syn$inertia, fpca_picoe$inertia,
-                                     fpca_nanoe$inertia, fpca_pro$inertia))
-ab_inertia <- ab_inertia %>% unite('VAR', c(PC, GROUPE), sep="_")
-ind <- which(ab_inertia$INERTIA<5)
-out <- ab_inertia$VAR[ind]
+                         'WEIGHT'=c(fpca_cry$weights, fpca_syn$weights, fpca_picoe$weights,
+                                    fpca_nanoe$weights, fpca_pro$weights))
+ab_weight <- ab_weight %>% unite('VAR', c(PC, GROUPE), sep="_")
 
 ###format data for export
 export_fpca_ab <- export_fpca_ab %>% 
   pivot_wider(names_from = GROUPE,
               values_from = c(PC1, PC2, PC3))
-
-#remove inertia <5%
-export_fpca_ab <- export_fpca_ab %>% dplyr::select(-out)
-  write.csv(export_fpca_ab, "results/PC_AB.csv", row.names=FALSE)
+write.csv(ab_weight, "results/PC_AB_WEIGHTS.csv", row.names=FALSE)
+write.csv(export_fpca_ab, "results/PC_AB.csv", row.names=FALSE)
 
 ###fpca on nutrients###
 out1 <- which(info_nutri$GROUPE=='NH4' & 
@@ -305,26 +304,23 @@ fpca_P$plot
 ###export data for FDA###
 export_fpca_nutri <- rbind(fpca_NH4$data, fpca_NO3$data, fpca_NO2$data,
                            fpca_S$data, fpca_P$data)
-##check inertia >5% 
-nutri_inertia <- data.frame('GROUPE'=c(rep('Amonium', 3),
+
+nutri_weight <- data.frame('GROUPE'=c(rep('Amonium', 3),
                                     rep('Nitrate', 3),
                                     rep('Nitrite', 3),
                                     rep('Silice', 3),
                                     rep('Phosphate', 3)),
                          'PC'=rep(c('PC1', 'PC2', 'PC3'), 5),
-                         'INERTIA'=c(fpca_NH4$inertia, fpca_NO3$inertia, fpca_NO2$inertia,
-                                     fpca_S$inertia, fpca_P$inertia))
-nutri_inertia <- nutri_inertia %>% unite('VAR', c(PC, GROUPE), sep="_")
-ind <- which(nutri_inertia$INERTIA<5)
-out <- nutri_inertia$VAR[ind]
+                         'WEIGHT' = c(fpca_NH4$weights, fpca_NO3$weights, fpca_NO2$weights,
+                                      fpca_S$weights, fpca_P$weights))
+nutri_weight <- nutri_weight %>% unite('VAR', c(PC, GROUPE), sep="_")
 
 ###format data for export
 export_fpca_nutri <- export_fpca_nutri %>% 
   pivot_wider(names_from = GROUPE,
               values_from = c(PC1, PC2, PC3))
 
-#remove inertia <5%
-export_fpca_nutri <- export_fpca_nutri %>% dplyr::select(-out)
+write.csv(nutri_weight, "results/PC_NUTRI_WEIGHTS.csv", row.names=FALSE)
 write.csv(export_fpca_nutri, "results/PC_NUTRI.csv", row.names=FALSE)
 
 
@@ -342,25 +338,21 @@ export_fpca_diff <- rbind(fpca_dcry$data, fpca_dsyn$data, fpca_dpicoe$data,
                         fpca_dnanoe$data, fpca_dpro$data)
 
 ##check inertia >5% 
-diff_inertia <- data.frame('GROUPE'=c(rep('Cryptophytes', 3),
+diff_weight <- data.frame('GROUPE'=c(rep('Cryptophytes', 3),
                                     rep('Synechococcus', 3),
                                     rep('Pico-eucaryotes', 3),
                                     rep('Nano-eucaryotes', 3),
                                     rep('Prochlorococcus', 3)),
                          'PC'=rep(c('PC1', 'PC2', 'PC3'), 5),
-                         'INERTIA'=c(fpca_dcry$inertia, fpca_dsyn$inertia, fpca_dpicoe$inertia,
-                                     fpca_dnanoe$inertia, fpca_dpro$inertia))
-diff_inertia <- diff_inertia %>% unite('VAR', c(PC, GROUPE), sep="_")
-ind <- which(diff_inertia$INERTIA<=6)
-out <- diff_inertia$VAR[ind]
+                         'WEIGHT'=c(fpca_dcry$weights, fpca_dsyn$weights, fpca_dpicoe$weights,
+                                     fpca_dnanoe$weights, fpca_dpro$weights))
+diff_weight <- diff_weight %>% unite('VAR', c(PC, GROUPE), sep="_")
 
 ###format data for export
 export_fpca_diff <- export_fpca_diff %>% 
   pivot_wider(names_from = GROUPE,
               values_from = c(PC1, PC2, PC3))
 
-#remove inertia <5%
-export_fpca_diff <- export_fpca_diff %>% dplyr::select(-out)
-
+write.csv(diff_weight, "results/PC_DIFF_WEIGHTS.csv", row.names=FALSE)
 write.csv(export_fpca_diff, "results/PC_DIFF.csv", row.names=FALSE)
 
