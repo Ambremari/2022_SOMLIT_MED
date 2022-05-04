@@ -17,7 +17,7 @@ library(fdapace)
 source("src/my_palette.R")
 
 ###save preprocess data
-save <- TRUE
+save <- FALSE
 
 ###Preprocessing function for PCA###
 build_ymat <- function(data, var){
@@ -119,6 +119,7 @@ my_fpca <- function(y_mat, all_info, variable, sp=NULL, year_lab=FALSE, nutri=FA
   pc1_pi <- round(facp$lambda[1]/sum(facp$lambda)*100, 2)
   pc2_pi <- round(facp$lambda[2]/sum(facp$lambda)*100, 2)
   pc3_pi <- round(facp$lambda[3]/sum(facp$lambda)*100, 2)
+  inertia <- c(pc1_pi, pc2_pi, pc3_pi)
   ##PC as mean perturbation
   xx <- facp$workGrid
   mean <- facp$mu
@@ -198,7 +199,7 @@ my_fpca <- function(y_mat, all_info, variable, sp=NULL, year_lab=FALSE, nutri=FA
                 vjust="inward", hjust="inward")}
   my_plot <- ggarrange(plot_pert, NULL, plot_score, nrow=1, 
                        widths=c(1, 0.1, 1.2))
-  return(list("data"=my_df, "plot"=my_plot))
+  return(list("data"=my_df, "plot"=my_plot, "inertia"=inertia))
 }  
 
 ###load raw data###
@@ -249,12 +250,31 @@ fpca_nanoe <- my_fpca(ymat_ab, info_ab, 'Abondance', sp='NANOEC', year_lab=TRUE,
 fpca_other <- my_fpca(ymat_ab, info_ab, 'Abondance', sp=c('SYNC', 'PICOEC', 'NANOEC'), year_lab=TRUE)
 fpca_picoe$plot
 fpca_cry$plot
+
+###export data for FDA###
 export_fpca_ab <- rbind(fpca_cry$data, fpca_syn$data, fpca_picoe$data,
                         fpca_nanoe$data, fpca_pro$data)
+##check inertia >5% 
+ab_inertia <- data.frame('GROUPE'=c(rep('Cryptophytes', 3),
+                                    rep('Synechococcus', 3),
+                                    rep('Pico-eucaryotes', 3),
+                                    rep('Nano-eucaryotes', 3),
+                                    rep('Prochlorococcus', 3)),
+                         'PC'=rep(c('PC1', 'PC2', 'PC3'), 5),
+                         'INERTIA'=c(fpca_cry$inertia, fpca_syn$inertia, fpca_picoe$inertia,
+                                     fpca_nanoe$inertia, fpca_pro$inertia))
+ab_inertia <- ab_inertia %>% unite('VAR', c(PC, GROUPE), sep="_")
+ind <- which(ab_inertia$INERTIA<5)
+out <- ab_inertia$VAR[ind]
+
+###format data for export
 export_fpca_ab <- export_fpca_ab %>% 
   pivot_wider(names_from = GROUPE,
               values_from = c(PC1, PC2, PC3))
-write.csv(export_fpca_ab, "results/PC_AB.csv", row.names=FALSE)
+
+#remove inertia <5%
+export_fpca_ab <- export_fpca_ab %>% dplyr::select(-out)
+  write.csv(export_fpca_ab, "results/PC_AB.csv", row.names=FALSE)
 
 ###fpca on nutrients###
 out1 <- which(info_nutri$GROUPE=='NH4' & 
@@ -277,16 +297,36 @@ fpca_P <- my_fpca(ymat_nutri, info_nutri, 'Concentration', sp='PO4',
                   year_lab=TRUE, nutri=TRUE, norm=FALSE)
 fpca_S <- my_fpca(ymat_nutri, info_nutri, 'Concentration', sp='SIOH4', 
                   year_lab=TRUE, nutri=TRUE, norm=FALSE)
-export_fpca_nutri <- rbind(fpca_NH4$data, fpca_NO3$data, fpca_NO2$data,
-                        fpca_S$data, fpca_P$data)
-export_fpca_nutri <- export_fpca_nutri %>% 
-  pivot_wider(names_from = GROUPE,
-              values_from = c(PC1, PC2, PC3))
-write.csv(export_fpca_nutri, "results/PC_NUTRI.csv", row.names=FALSE)
 
 fpca_NH4$plot
 fpca_NO3$plot
 fpca_P$plot
+
+###export data for FDA###
+export_fpca_nutri <- rbind(fpca_NH4$data, fpca_NO3$data, fpca_NO2$data,
+                           fpca_S$data, fpca_P$data)
+##check inertia >5% 
+nutri_inertia <- data.frame('GROUPE'=c(rep('Amonium', 3),
+                                    rep('Nitrate', 3),
+                                    rep('Nitrite', 3),
+                                    rep('Silice', 3),
+                                    rep('Phosphate', 3)),
+                         'PC'=rep(c('PC1', 'PC2', 'PC3'), 5),
+                         'INERTIA'=c(fpca_NH4$inertia, fpca_NO3$inertia, fpca_NO2$inertia,
+                                     fpca_S$inertia, fpca_P$inertia))
+nutri_inertia <- nutri_inertia %>% unite('VAR', c(PC, GROUPE), sep="_")
+ind <- which(nutri_inertia$INERTIA<5)
+out <- nutri_inertia$VAR[ind]
+
+###format data for export
+export_fpca_nutri <- export_fpca_nutri %>% 
+  pivot_wider(names_from = GROUPE,
+              values_from = c(PC1, PC2, PC3))
+
+#remove inertia <5%
+export_fpca_nutri <- export_fpca_nutri %>% dplyr::select(-out)
+write.csv(export_fpca_nutri, "results/PC_NUTRI.csv", row.names=FALSE)
+
 
 ###fpca on diffusion###
 fpca_diff <- my_fpca(ymat_diff, info_diff, 'Diffusion')
@@ -296,10 +336,31 @@ fpca_dsyn <- my_fpca(ymat_diff, info_diff, 'Diffusion', sp='SYNSSC', year_lab=TR
 fpca_dpicoe <- my_fpca(ymat_diff, info_diff, 'Diffusion', sp='PICOESSC', year_lab=TRUE, norm=FALSE)
 fpca_dnanoe <- my_fpca(ymat_diff, info_diff, 'Diffusion', sp='NANOESSC', year_lab=TRUE, norm=FALSE)
 fpca_dnanoe$plot
+
+###export data for FDA###
 export_fpca_diff <- rbind(fpca_dcry$data, fpca_dsyn$data, fpca_dpicoe$data,
                         fpca_dnanoe$data, fpca_dpro$data)
+
+##check inertia >5% 
+diff_inertia <- data.frame('GROUPE'=c(rep('Cryptophytes', 3),
+                                    rep('Synechococcus', 3),
+                                    rep('Pico-eucaryotes', 3),
+                                    rep('Nano-eucaryotes', 3),
+                                    rep('Prochlorococcus', 3)),
+                         'PC'=rep(c('PC1', 'PC2', 'PC3'), 5),
+                         'INERTIA'=c(fpca_dcry$inertia, fpca_dsyn$inertia, fpca_dpicoe$inertia,
+                                     fpca_dnanoe$inertia, fpca_dpro$inertia))
+diff_inertia <- diff_inertia %>% unite('VAR', c(PC, GROUPE), sep="_")
+ind <- which(diff_inertia$INERTIA<=6)
+out <- diff_inertia$VAR[ind]
+
+###format data for export
 export_fpca_diff <- export_fpca_diff %>% 
   pivot_wider(names_from = GROUPE,
               values_from = c(PC1, PC2, PC3))
+
+#remove inertia <5%
+export_fpca_diff <- export_fpca_diff %>% dplyr::select(-out)
+
 write.csv(export_fpca_diff, "results/PC_DIFF.csv", row.names=FALSE)
 
