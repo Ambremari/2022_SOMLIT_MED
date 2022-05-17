@@ -227,8 +227,8 @@ data_hydro <- read.csv("data/HYDRO.csv")
 
 
 ##VILLEFRANCHE
-export <- reg_CI(data_hydro, site=12, variable='CHLA', h=35, pilot_h=21, start="2007-11-20")
-write.csv(export, "results/chla_villefranche.csv", row.names=FALSE)
+#export <- reg_CI(data_hydro, site=12, variable='CHLA', h=35, pilot_h=21, start="2007-11-20")
+#write.csv(export, "results/chla_villefranche.csv", row.names=FALSE)
 
 
 ###plot regression###
@@ -352,4 +352,21 @@ data <- read.csv("results/TS_CHLA_MARSEILLE.csv")
 chla_mar <- plot_reg_CI(data, 'Marseille', 'Chlorophylle a', TeX('Concentration $(\\mu g/L)$'))
 data <- read.csv("results/chla_villefranche.csv")
 chla_vil <- plot_reg_CI(data, 'Villefranche', 'Chlorophylle a', TeX('Concentration $(\\mu g/L)$'))
+
+ggarrange(syn_ab_ban + xlab('') + scale_y_continuous(limits=c(0, 120000)), 
+          syn_ab_mar + ylab('') + xlab('') + scale_y_continuous(limits=c(0, 120000)),
+          syn_ab_vil + ylab('') + xlab('')+ scale_y_continuous(limits=c(0, 120000)),
+          cry_ab_ban + xlab('') + scale_y_continuous(limits=c(0, 1250)),
+          cry_ab_mar + ylab('') + xlab('')+ scale_y_continuous(limits=c(0, 1250)),
+          cry_ab_vil  + xlab('')+ ylab('')+ scale_y_continuous(limits=c(0, 1250)),
+          pro_ab_ban + xlab('')+ scale_y_continuous(limits=c(0, 45000)),
+          pro_ab_mar + ylab('') + xlab('')+ scale_y_continuous(limits=c(0, 45000)),
+          pro_ab_vil +  xlab('')+ ylab('')+ scale_y_continuous(limits=c(0, 45000)),
+          nanoe_ab_ban + xlab('')+ scale_y_continuous(limits=c(0, 7000)),
+          nanoe_ab_mar + xlab('') + ylab('')+ scale_y_continuous(limits=c(0, 7000)),
+          nanoe_ab_vil  + xlab('') + ylab('')+ scale_y_continuous(limits=c(0, 7000)),
+          picoe_ab_ban + scale_y_continuous(limits=c(0, 35000)),
+          picoe_ab_mar + ylab('')+ scale_y_continuous(limits=c(0, 35000)),
+          picoe_ab_vil + ylab('')+ scale_y_continuous(limits=c(0, 35000)),
+          ncol=3, nrow=5)
 

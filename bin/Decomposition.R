@@ -12,6 +12,7 @@ library(tidyverse)
 library(lubridate)
 library(forecast)
 library(latex2exp)
+library(astsa)
 
 ###source code###
 source("src/my_palette.R")
@@ -57,13 +58,14 @@ plot_period <- function(data, variable, site, var_name, sp=NULL, k=c(1,1), tp=0.
   grid(lty=1)
   par(new=TRUE)
   plot(freq, Per, type='o', xlab='Fréquence', 
-       ylab='Périodogramme', lwd=1, xlim=c(0,6))
+       ylab='Périodogramme', lwd=1, xlim=c(0,5),
+       main=paste(site, "-", var_name, sp), cex.main=0.9, cex.lab=0.9)
   plot.new()
   grid(lty=1)
   par(new=TRUE)
-  plot(my_per$freq, my_per$spec, type='l', xlim=c(0,6), 
-       xlab='Frequence', ylab='Periodogramme moyen', 
-       main=paste(site, "-", var_name, sp, ", fenetre = ", bdw))
+  plot(my_per$freq, my_per$spec, type='l', xlim=c(0,5), 
+       xlab='Fréquence', ylab='Périodogramme moyen', 
+       main=paste("fenêtre = ", bdw), cex.main=0.9, cex.lab=0.9)
   abline(h=CI_low, lty=2, col=2:(K+1))
   legend("topright", lty=2, legend = Roots, col=2:(K+1))
   }
