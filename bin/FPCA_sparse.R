@@ -147,19 +147,19 @@ my_fpca <- function(y_mat, all_info, variable, sp=NULL, year_lab=FALSE, nutri=FA
   A <- ggplot() + geom_path(data=df_mean, aes(xx, yhat), cex=1) +
     geom_point(data=df_pcp1, aes(xx, yhat), cex=1, col=my_palette[1], shape=3) +
     geom_path(data=df_pcn1, aes(xx, yhat), cex=1, col=my_palette[2], linetype='dashed') +
-    theme_light() + ylab('variable') + xlab('Temps') +
+    theme_light() + ylab(variable) + xlab('Temps') +
     scale_x_continuous(breaks = 1:12, labels=mois) +
     ggtitle(paste('PC1', pc1_pi, '%'))
   B <- ggplot() + geom_path(data=df_mean, aes(xx, yhat), cex=1) +
     geom_point(data=df_pcp2, aes(xx, yhat), cex=1, col=my_palette[1], shape=3) +
     geom_path(data=df_pcn2, aes(xx, yhat), cex=1, col=my_palette[2], linetype='dashed') +
-    theme_light() + ylab('variable') + xlab('Temps') +
+    theme_light() + ylab(variable) + xlab('Temps') +
     scale_x_continuous(breaks = 1:12, labels=mois) +
     ggtitle(paste('PC2', pc2_pi, '%'))
   C <- ggplot() + geom_path(data=df_mean, aes(xx, yhat), cex=1) +
     geom_point(data=df_pcp3, aes(xx, yhat), cex=1, col=my_palette[1], shape=3) +
     geom_path(data=df_pcn3, aes(xx, yhat), cex=1, col=my_palette[2], linetype='dashed') +
-    theme_light() + ylab('variable') + xlab('Temps') +
+    theme_light() + ylab(variable) + xlab('Temps') +
     scale_x_continuous(breaks = 1:12, labels=mois) +
     ggtitle(paste('PC3', pc3_pi, '%'))
   plot_pert <- ggarrange(A,B, C, ncol=1, nrow=3)
@@ -202,7 +202,7 @@ my_fpca <- function(y_mat, all_info, variable, sp=NULL, year_lab=FALSE, nutri=FA
                 vjust="inward", hjust="inward")}
   my_plot <- ggarrange(plot_pert, NULL, plot_score, nrow=1, 
                        widths=c(1, 0.1, 1.2))
-  return(list("data"=my_df, "plot"=my_plot, 'weights'=weights))
+  return(list("data"=my_df, "plot"=my_plot, 'weights'=weights, 'PC1'=A, 'PC2'=B))
 }  
 
 ###load raw data###
@@ -244,20 +244,20 @@ out4 <- which(info_ab$GROUPE=='PICOEC' &
 outs <- c(out1, out2, out3, out4)
 ymat_ab <- ymat_ab[,-outs]
 info_ab <- info_ab[-outs,]
-fpca_ab <- my_fpca(ymat_ab, info_ab, 'Abondance')
+#fpca_ab <- my_fpca(ymat_ab, info_ab, 'Abondance')
 fpca_cry <- my_fpca(ymat_ab, info_ab, 'Abondance', sp='CRYC', year_lab=TRUE, norm=FALSE)
 fpca_pro <- my_fpca(ymat_ab, info_ab, 'Abondance', sp='PROC', year_lab=TRUE, norm=FALSE)
 fpca_syn <- my_fpca(ymat_ab, info_ab, 'Abondance', sp='SYNC', year_lab=TRUE, norm=FALSE)
 fpca_picoe <- my_fpca(ymat_ab, info_ab, 'Abondance', sp='PICOEC', year_lab=TRUE, norm=FALSE)
 fpca_nanoe <- my_fpca(ymat_ab, info_ab, 'Abondance', sp='NANOEC', year_lab=TRUE, norm=FALSE)
-fpca_other <- my_fpca(ymat_ab, info_ab, 'Abondance', sp=c('SYNC', 'PICOEC', 'NANOEC'), year_lab=TRUE)
-fpca_picoe$plot
-fpca_cry$plot
+#fpca_other <- my_fpca(ymat_ab, info_ab, 'Abondance', sp=c('SYNC', 'PICOEC', 'NANOEC'), year_lab=TRUE)
+#fpca_picoe$plot
+#fpca_cry$plot
 
 ###export data for FDA###
 export_fpca_ab <- rbind(fpca_cry$data, fpca_syn$data, fpca_picoe$data,
                         fpca_nanoe$data, fpca_pro$data)
-##check inertia >5% 
+##weights
 ab_weight <- data.frame('GROUPE'=c(rep('Cryptophytes', 3),
                                     rep('Synechococcus', 3),
                                     rep('Pico-eucaryotes', 3),
@@ -272,8 +272,8 @@ ab_weight <- ab_weight %>% unite('VAR', c(PC, GROUPE), sep="_")
 export_fpca_ab <- export_fpca_ab %>% 
   pivot_wider(names_from = GROUPE,
               values_from = c(PC1, PC2, PC3))
-write.csv(ab_weight, "results/PC_AB_WEIGHTS.csv", row.names=FALSE)
-write.csv(export_fpca_ab, "results/PC_AB.csv", row.names=FALSE)
+#write.csv(ab_weight, "results/PC_AB_WEIGHTS.csv", row.names=FALSE)
+#write.csv(export_fpca_ab, "results/PC_AB.csv", row.names=FALSE)
 
 ###fpca on nutrients###
 out1 <- which(info_nutri$GROUPE=='NH4' & 
@@ -285,7 +285,7 @@ out2 <- which(info_nutri$GROUPE=='PO4' &
 outs <- c(out1, out2, out3)
 ymat_nutri <- ymat_nutri[,-outs]
 info_nutri <- info_nutri[-outs,]
-fpca_nutri <- my_fpca(ymat_nutri, info_nutri, 'Concentration', nutri=TRUE)
+#fpca_nutri <- my_fpca(ymat_nutri, info_nutri, 'Concentration', nutri=TRUE)
 fpca_NH4 <- my_fpca(ymat_nutri, info_nutri, 'Concentration', sp='NH4', 
                     year_lab=TRUE, nutri=TRUE, norm=FALSE)
 fpca_NO3 <- my_fpca(ymat_nutri, info_nutri, 'Concentration', sp='NO3', 
@@ -297,9 +297,9 @@ fpca_P <- my_fpca(ymat_nutri, info_nutri, 'Concentration', sp='PO4',
 fpca_S <- my_fpca(ymat_nutri, info_nutri, 'Concentration', sp='SIOH4', 
                   year_lab=TRUE, nutri=TRUE, norm=FALSE)
 
-fpca_NH4$plot
-fpca_NO3$plot
-fpca_P$plot
+#fpca_NH4$plot
+#fpca_NO3$plot
+#fpca_P$plot
 
 ###export data for FDA###
 export_fpca_nutri <- rbind(fpca_NH4$data, fpca_NO3$data, fpca_NO2$data,
@@ -320,24 +320,24 @@ export_fpca_nutri <- export_fpca_nutri %>%
   pivot_wider(names_from = GROUPE,
               values_from = c(PC1, PC2, PC3))
 
-write.csv(nutri_weight, "results/PC_NUTRI_WEIGHTS.csv", row.names=FALSE)
-write.csv(export_fpca_nutri, "results/PC_NUTRI.csv", row.names=FALSE)
+#write.csv(nutri_weight, "results/PC_NUTRI_WEIGHTS.csv", row.names=FALSE)
+#write.csv(export_fpca_nutri, "results/PC_NUTRI.csv", row.names=FALSE)
 
 
 ###fpca on diffusion###
-fpca_diff <- my_fpca(ymat_diff, info_diff, 'Diffusion')
+#fpca_diff <- my_fpca(ymat_diff, info_diff, 'Diffusion')
 fpca_dcry <- my_fpca(ymat_diff, info_diff, 'Diffusion', sp='CRYSSC', year_lab=TRUE, norm=FALSE)
 fpca_dpro <- my_fpca(ymat_diff, info_diff, 'Diffusion', sp='PROSSC', year_lab=TRUE, norm=FALSE)
 fpca_dsyn <- my_fpca(ymat_diff, info_diff, 'Diffusion', sp='SYNSSC', year_lab=TRUE, norm=FALSE)
 fpca_dpicoe <- my_fpca(ymat_diff, info_diff, 'Diffusion', sp='PICOESSC', year_lab=TRUE, norm=FALSE)
 fpca_dnanoe <- my_fpca(ymat_diff, info_diff, 'Diffusion', sp='NANOESSC', year_lab=TRUE, norm=FALSE)
-fpca_dnanoe$plot
+#fpca_dnanoe$plot
 
 ###export data for FDA###
 export_fpca_diff <- rbind(fpca_dcry$data, fpca_dsyn$data, fpca_dpicoe$data,
                         fpca_dnanoe$data, fpca_dpro$data)
 
-##check inertia >5% 
+##export weights
 diff_weight <- data.frame('GROUPE'=c(rep('Cryptophytes', 3),
                                     rep('Synechococcus', 3),
                                     rep('Pico-eucaryotes', 3),
@@ -353,6 +353,6 @@ export_fpca_diff <- export_fpca_diff %>%
   pivot_wider(names_from = GROUPE,
               values_from = c(PC1, PC2, PC3))
 
-write.csv(diff_weight, "results/PC_DIFF_WEIGHTS.csv", row.names=FALSE)
-write.csv(export_fpca_diff, "results/PC_DIFF.csv", row.names=FALSE)
+#write.csv(diff_weight, "results/PC_DIFF_WEIGHTS.csv", row.names=FALSE)
+#write.csv(export_fpca_diff, "results/PC_DIFF.csv", row.names=FALSE)
 
