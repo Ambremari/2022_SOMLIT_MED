@@ -17,7 +17,7 @@ FPCA.R réalise une ACP fonctionnelle pour les unités annuelles d'Abondance, de
 
 FPCA_sparse.R réalise une ACP fonctionnelle pour les unités annuelles d'Abondance, de Diffusion et des Nutriments pour les trois stations. Les courbes lissées sont obtenues à partir des moyennes mensuelles des observations. Si toutes les moyennes mensuelles ne sont pas disponibles pour une année, celle-ci est quand même prise en compte. Les trois premières composantes principales sont représentées comme perturbation de la moyenne. Les scores des deux premières composantes principales sont également représentés. 
 
-FDA.R réalise une analyse factorielle discriminante des trois premières composantes principales obtenues par l'ACP fonctionnelle pour l'abondance de chaque groupe ou la concentration de chaque nutriment, en fonction du site. Elle permet de visualiser les scores des individus, les scores des variables et la contribution des variables pour chaque axe.
+FDA.R réalise une analyse factorielle discriminante des premières composantes principales obtenues par l'ACP fonctionnelle pour l'abondance de chaque groupe ou la concentration de chaque nutriment, en fonction du site. Chaque variable est pondérée en fonction de sa contribution à la décomposition en composantes principales. Elle permet de visualiser les scores des individus, les scores des variables et la contribution des variables pour chaque axe.
 
 
 ### Données
