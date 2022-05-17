@@ -15,3 +15,4 @@ img/
 *.toc
 *.gz
 
+bin/FDA_FPCA_fig.R
