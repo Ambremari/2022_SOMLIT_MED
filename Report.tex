@@ -123,31 +123,42 @@ Année universitaire\par
 
 \subsubsection{Jeux de données}
 
+Les données collectées lors des campagnes du SOMLIT sont hébergées dans leur propre base de données.  Les données hydrologiques, biologiques et CTD pour les trois sites d’intérêt, Banyuls, Marseille et Villefranche, ont été téléchargées depuis leur site internet (https://www.somlit.fr/).  Le Tableau 1 résume les données récupérées pour les trois stations. Le jeu de données hydrologiques (HYDRO) contient les données de Température, Salinité, Oxygène, pH, Amonium ($NH_4$), Nitrites ($NO_3$), Nitrates ($NO_2$), Phosphates ($PO_4$), Silice ($Si(OH)_4$) , Carbone Organique Particulaire (COP), Azote Organique Particulaire (NOP) et  Chlorophylle a. Le jeu de données biologiques (PICONANO) contient les données de cytométrie des groupes de plancton présentés précédemment. Pour tous les groupes, on dispose des données d’abondance et de diffusion. Pour le phytoplancton, sont de même disponibles les valeurs d’auto-fluorescence rouge, et pour les bactéries hétérotrophes les valeurs de fluorescence verte. Les valeurs d’auto-fluorescence orange des Synechococcus et des Cryptophytes sont également renseignées. Le jeu de données CTD contient les profils verticaux de la surface au fond pour les variables Température, Salinité, Chlorophylle a et Éclairement. 
+
+Une première visualisation des données brutes permet d’identifier les séries temporelles exploitables et les éventuelles données aberrantes. La Figure 1 présente les données de surface des variables hydrologiques au cours du temps toutes stations confondues. Les éventuelles valeurs aberrantes sont identifiées en rouge. La ligne pointillée orange correspond au début du jeu de données PICONANO et la lignée pointillée bleue correspond à la mise en place du protocole national pour la variable présentée. Étant donné la mise en place tardive d’un protocole standardisé pour le pH, cette variable n’est pas analysée. La mesure de l’Oxygène étant sujette à de nombreux biais liés à la précision de l’échantillonnage, celle-ci est également ignorée. La Figure 2 présente les données de Température de surface et au fond pour les trois stations. Les graphiques nous permettent d’identifier une potentielle inversion des données de fond et de surface à Villefranche entre le début de la série temporelle et 2002. Comme il est impossible de savoir avec certitude quelles observations ont été interverties, les données HYDRO de Villefranche datant d’avant  2002 ne sont pas exploitées. 
+
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth]{fig/visualisation_hydro.pdf}
+\includegraphics[width=\textwidth]{fig/MM_visualisation_hydro.pdf}
 \caption{Séries temporelles des données hydrologiques de surface pour les trois stations SOMLIT méditerranéennes confondues. La ligne pointillé bleue correspond à la mise en place du protocole national pour la variable présentée. La ligne pointillée orange correspond au début du jeu de données PICONANO. Les éventuelles données aberrantes sont représentées en rouge.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[width=.9\textwidth]{fig/visualisation_T.pdf}
+\includegraphics[width=.9\textwidth]{fig/MM_visualisation_T.pdf}
 \caption{Séries temporelles des données de Température en surface et au fond pour les trois stations méditerranéennes. La ligne pointillée orange correspond au début du jeu de données PICONANO. Les éventuelles données aberrantes sont représentées en rouge.}
 \end{figure}
 
 
+
+Dans le cadre de ce stage, seul le phytoplancton est étudié. Par soucis de temps, les bactéries hétérotrophes ne sont pas prises en compte. 
+La combinaison des propriétés optiques des cellules, mises en évidence par la cytométrie en flux, permet de distinguer des groupes dans la communauté phytoplanctonique. Si la fluorescence rouge à la chlorophylle présente une gamme étendue de valeur au sein d’une communauté, sa variabilité reste faible au sein d’une même espèce \citet{Trask1982}. Ainsi, la fluorescence à la chlorophylle peut être utilisée pour distinguer des espèces. L’association de la fluorescence rouge à la diffusion lumineuse, indicatrice de la taille et de la structure des cellules, devrait donc permettre d’identifier les groupes fonctionnels décrits précédemment. La Figure 3 représente avec une échelle logarithmique, la valeur moyenne d’auto-fluorescence rouge d’un groupe lors d’un prélèvement, en fonction de la valeur moyenne de diffusion lumineuse.  A l’exception d’une observation pour le groupe des Synechococcus isolée de toutes les autres, les données paraissent fiables puisque l'on identifie facilement les différents groupes. 
+
 \begin{figure}
 \centering
-\includegraphics[width=.75 \textwidth]{fig/visualisation_phyto.pdf}
+\includegraphics[width=.75\textwidth]{fig/MM_visualisation_phyto.pdf}
 \caption{}
 \end{figure}
 
+
+La Figure 4 présente les quatre variables disponibles pour les Synechococcus et les Cryptophytes pour la station de Marseille. Toutes les variables semblent exploitables et pourraient potentiellement apporter des informations pertinentes. Néanmoins, durant ce stage l’étude sera focalisée sur les variables d’Abondance et de Diffusion lumineuse, cette dernière étant indicatrice de la taille moyenne des organismes. 
+
+
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth]{fig/visualisation_cyano.pdf}
-\caption{Série temporelle des données de cytométrie pour Prochlorococcus et Synechococcus pour la station de Marseille. Les lignes pointillées bleues correspondent au 1er janvier de chaque année.}
+\includegraphics[width=\textwidth]{fig/MM_visualisation_ts_phyto.pdf}
+\caption{Série temporelle des données de cytométrie après transformation logarithmique pour les Cryptophytes et Synechococcus pour la station de Marseille. Les lignes pointillées oranges correspondent au 1er janvier de chaque année.}
 \end{figure}
-
 
 
 
@@ -163,7 +174,7 @@ Année universitaire\par
 
 
 \addcontentsline{toc}{section}{Bibliographie}
-\bibliography{biblio}
+\bibliography{biblio.bib}
 
 \newpage
 \addcontentsline{toc}{section}{Liste des Figures}

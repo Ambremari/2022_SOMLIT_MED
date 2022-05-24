@@ -5,7 +5,7 @@
 ################
 
 ###working directory###
-setwd("C:/Users/precym-guest/Dropbox/2022_stageM2_COUTEYEN/2022_SOMLIT_MED")
+setwd("C:/Users/ambre/Dropbox/2022_stageM2_COUTEYEN/2022_SOMLIT_MED")
 
 ###packages### 
 library(tidyverse)
@@ -57,15 +57,15 @@ plot_period <- function(data, variable, site, var_name, sp=NULL, k=c(1,1), tp=0.
   plot.new()
   grid(lty=1)
   par(new=TRUE)
-  plot(freq, Per, type='o', xlab='FrÃ©quence', 
-       ylab='PÃ©riodogramme', lwd=1, xlim=c(0,5),
+  plot(freq, Per, type='o', xlab='Fréquence', 
+       ylab='Périodogramme', lwd=1, xlim=c(0,5),
        main=paste(site, "-", var_name, sp), cex.main=0.9, cex.lab=0.9)
   plot.new()
   grid(lty=1)
   par(new=TRUE)
   plot(my_per$freq, my_per$spec, type='l', xlim=c(0,5), 
-       xlab='FrÃ©quence', ylab='PÃ©riodogramme moyen', 
-       main=paste("fenÃªtre = ", bdw), cex.main=0.9, cex.lab=0.9)
+       xlab='Fréquence', ylab='Périodogramme moyen', 
+       main=paste("fenêtre = ", bdw), cex.main=0.9, cex.lab=0.9)
   abline(h=CI_low, lty=2, col=2:(K+1))
   legend("topright", lty=2, legend = Roots, col=2:(K+1))
   }
@@ -146,10 +146,10 @@ plot_decomp <- function(res, fit_df, seasons, site, variable, sp=NULL){
                          levels=c("Data", "Trend", 
                                   lev_seas, 
                                   "Remainder", "Predict"),
-                         labels=c("DonnÃ©es",
+                         labels=c("Données",
                                   "Tendance",
                                   lab_seas,
-                                  "RÃ©sidus", "PrÃ©diction"))
+                                  "Résidus", "Prédiction"))
   center <- plot_fit %>% group_by(key) %>% summarise("m"=min(value), "M"=max(value), "C"=(m+M)/2)
   scale <- data.frame("x1"=rep(ymd("2011-10-01"), length(levels(plot_fit$key))), 
                       "y1"=center$C-my_range, 
@@ -172,7 +172,7 @@ plot_decomp <- function(res, fit_df, seasons, site, variable, sp=NULL){
   res$DATE <- ymd(res$DATE)
   new_res <- res %>% ggplot(aes(x=DATE, xend=DATE, y=0, yend=RES)) + 
     geom_segment(col=my_palette[6], size=.7) +
-    theme_light() + ylab("RÃ©sidus dÃ©corrÃ©lÃ©s") + xlab('Temps')
+    theme_light() + ylab("Résidus décorrélés") + xlab('Temps')
   #residual acf
   n <- nrow(res)
   my_sd <- sd(res$RES)
@@ -180,22 +180,22 @@ plot_decomp <- function(res, fit_df, seasons, site, variable, sp=NULL){
   y <- dnorm(x, sd=my_sd)
   df <- data.frame(x, y)
   ACF <- ggAcf(res$RES, lag.max=n) + theme_light() + 
-    scale_y_continuous(limits=c(-0.2, 0.5)) + ggtitle("ACF des rÃ©sidus")
-  HIST <- forecast::gghistogram(res$RES) + theme_light() + xlab("RÃ©sidus") + 
+    scale_y_continuous(limits=c(-0.2, 0.5)) + ggtitle("ACF des résidus")
+  HIST <- forecast::gghistogram(res$RES) + theme_light() + xlab("Résidus") + 
     geom_line(data=df, aes(x, y), col=my_palette[2], size=1) + 
-    ylab('Compte') + ggtitle("Histogramme des rÃ©sidus")
+    ylab('Compte') + ggtitle("Histogramme des résidus")
   #combine all plots
   res_plot <- ggarrange(NULL, new_res, ACF, HIST, NULL, nrow=5, ncol=1, heights=c(0.5, 1, 1, 1.2, 0.5))
   my_plot <- ggarrange(decomp, NULL, res_plot, ncol=3, widths=c(1.5, 0.1, 1))
   return(my_plot)
 }
   
-data <- read.csv("results/TS_CRY_AB_MARSEILLE.csv")
-plot_period(data, 'ABONDANCE', 'Marseille', 'Abondance', 'Cryptophytes', K=3)
-fit <- my_mstl(data, 'ABONDANCE', 352, 352, 11, 15)
+data <- read.csv("results/TS_SYN_AB_BANYULS.csv")
+plot_period(data, 'ABONDANCE', 'Banyuls', 'Abondance', 'Synechococcus', K=3)
+fit <- my_mstl(data, 'ABONDANCE', 365, c(360, 185), c(11, 17), 17)
 plot_cor(fit)
-res <- res_decor(fit, 9)
+res <- res_decor(fit, 11)
 x11()
-plot_decomp(res, fit, 352, 'Marseille', 'Abondance', 'Cryptophytes')
+plot_decomp(res, fit, 352, 'Banyuls', 'Abondance', 'Synechococcus')
 x11()
 plot(fit$Seasonal352 + fit$Remainder, type='l')

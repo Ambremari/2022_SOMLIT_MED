@@ -5,12 +5,13 @@
 ################
 
 ###working directory###
-setwd("C:/Users/precym-guest/Dropbox/2022_stageM2_COUTEYEN/2022_SOMLIT_MED")
+setwd("C:/Users/ambre/Dropbox/2022_stageM2_COUTEYEN/2022_SOMLIT_MED")
 
 ###packages### 
 library(tidyverse)
 library(lubridate)
 library(latex2exp)
+library(ggpubr)
 
 ###source code###
 source("src/my_palette.R")
@@ -22,15 +23,16 @@ source("src/reg_pol_var_cond.R")
 ###function to compute regression and CI###
 
 #site as ID_SITE, group as value and variable as column name
-reg_CI <- function(data, site, group=NULL, variable, h, pilot_h, start='1995-01-01'){
+reg_CI <- function(data, site, group=NULL, variable, h, pilot_h, start='1995-01-01', ctd=FALSE){
   p <- 2 #regression order
   a <- 1 #taylor approx order
-  if(is.null(group)==TRUE){
+  if(is.null(group)==TRUE & ctd==FALSE){
     df <- data %>% filter(ID_SITE==site & PROF_TEXT=='S')
   }
   if(is.null(group)==FALSE){
     df <- data %>% filter(ID_SITE==site & GROUPE==group & PROF_TEXT=='S')
-    }
+  }
+  if(ctd){df <- data}
   df <- df %>% dplyr::select("DATE", variable)
   df <- na.omit(df)
   #date to time vector
@@ -40,9 +42,11 @@ reg_CI <- function(data, site, group=NULL, variable, h, pilot_h, start='1995-01-
   T0 <- df$DATE[1]
   xech <- as.numeric(df$DATE-T0)
   #values to log to avoid negative approx
-  y_var <- df[,2]
-  yech <- log(y_var+1)
-  
+  if(ctd==FALSE){
+  yech <- df[,2]
+  yech <- log(yech+1)
+  }
+  if(ctd){yech <- df[,variable]}
   #polynomial regression
   my_reg <- reg_pol(xech, yech, h, p)
   reg_time <- my_reg$X
@@ -78,7 +82,18 @@ reg_CI <- function(data, site, group=NULL, variable, h, pilot_h, start='1995-01-
 ###function to plot regression w/ CI###
 
 #site, variable and group as display on plot
-plot_reg_CI <- function(data, site, group, variable){
+plot_reg_CI <- function(data, site, group=NULL, variable, my_points, var_points='ABONDANCE'){
+  if(is.null(group)==FALSE){
+  my_points$DATE <- ymd(my_points$DATE)
+  my_points$ID_SITE <- factor(my_points$ID_SITE,
+                              levels=c(10, 11, 12),
+                              labels=c('Banyuls', 'Marseille', 'Villefranche'))
+  
+    my_points$GROUPE <- factor(my_points$GROUPE,
+                             labels=c('Cryptophytes', 'HNA', 'LNA', 'Nano-eucaryotes',
+                             'Pico-eucaryotes', 'Prochlorococcus', 'Synechococcus', 'BAC'))
+    my_points <- my_points %>% filter(ID_SITE==site & GROUPE==group)
+  }
   data$DATE <- ymd(data$DATE)
   colnames(data)[3] <- "VARIABLE"
   #turn log value to original value
@@ -95,7 +110,14 @@ plot_reg_CI <- function(data, site, group, variable){
     geom_ribbon(aes(DATE, ymin=CI_low, ymax=CI_up), alpha=.6, fill='grey') +
     geom_line(aes(DATE, VARIABLE), col=my_palette[2], size=.8) +
     theme_light() + ylab(variable) + xlab('Temps') + 
-    ggtitle(paste(site, group, sep=" - "))
+    ggtitle(paste(site, group, sep=" - ")) +
+    theme(axis.text=element_text(size=16),
+          axis.title=element_text(size=18))
+  if(is.null(group)==FALSE){
+    my_plot <- my_plot +
+      geom_point(data=my_points, aes_string('DATE', var_points), size=.9) +
+      geom_line(aes(DATE, VARIABLE), col=my_palette[2], size=.8)
+  }
   return(my_plot)
 }
 
@@ -234,41 +256,41 @@ data_hydro <- read.csv("data/HYDRO.csv")
 ###plot regression###
 #abundance 
 data <- read.csv("results/TS_CRY_AB_BANYULS.csv")
-cry_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Cryptophytes', 'Abondance (cellules/mL)')
+cry_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Cryptophytes', 'Abondance (cellules/mL)', data_piconano)
 data <- read.csv("results/TS_SYN_AB_BANYULS.csv")
-syn_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Synechococcus', 'Abondance (cellules/mL)')
+syn_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Synechococcus', 'Abondance (cellules/mL)', data_piconano)
 data <- read.csv("results/TS_PRO_AB_BANYULS.csv")
-pro_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Prochlorococcus', 'Abondance (cellules/mL)') + 
+pro_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Prochlorococcus', 'Abondance (cellules/mL)', data_piconano) + 
   scale_y_continuous(limits=c(-1, 3e4))
 data <- read.csv("results/TS_PICOE_AB_BANYULS.csv")
-picoe_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Pico-eucaryotes', 'Abondance (cellules/mL)') + 
+picoe_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Pico-eucaryotes', 'Abondance (cellules/mL)', data_piconano) + 
   scale_y_continuous(limits=c(-1, 3e4))
 data <- read.csv("results/TS_NANOE_AB_BANYULS.csv")
-nanoe_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Nano-eucaryotes', 'Abondance (cellules/mL)') +  
+nanoe_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Nano-eucaryotes', 'Abondance (cellules/mL)', data_piconano) +  
   scale_y_continuous(limits=c(-1, 6e3))
 
 data <- read.csv("results/TS_CRY_AB_MARSEILLE.csv")
-cry_ab_mar <- plot_reg_CI(data, 'Marseille', 'Cryptophytes', 'Abondance (cellules/mL)') + 
+cry_ab_mar <- plot_reg_CI(data, 'Marseille', 'Cryptophytes', 'Abondance (cellules/mL)', data_piconano) + 
   scale_y_continuous(limits=c(-1, 1.2e3))
 data <- read.csv("results/TS_SYN_AB_MARSEILLE.csv")
-syn_ab_mar <- plot_reg_CI(data, 'Marseille', 'Synechococcus', 'Abondance (cellules/mL)')
+syn_ab_mar <- plot_reg_CI(data, 'Marseille', 'Synechococcus', 'Abondance (cellules/mL)', data_piconano)
 data <- read.csv("results/TS_PRO_AB_MARSEILLE.csv")
-pro_ab_mar <- plot_reg_CI(data, 'Marseille', 'Prochlorococcus', 'Abondance (cellules/mL)')
+pro_ab_mar <- plot_reg_CI(data, 'Marseille', 'Prochlorococcus', 'Abondance (cellules/mL)', data_piconano)
 data <- read.csv("results/TS_PICOE_AB_MARSEILLE.csv")
-picoe_ab_mar <- plot_reg_CI(data, 'Marseille', 'Pico-eucaryotes', 'Abondance (cellules/mL)')
+picoe_ab_mar <- plot_reg_CI(data, 'Marseille', 'Pico-eucaryotes', 'Abondance (cellules/mL)', data_piconano)
 data <- read.csv("results/TS_NANOE_AB_MARSEILLE.csv")
-nanoe_ab_mar <- plot_reg_CI(data, 'Marseille', 'Nano-eucaryotes', 'Abondance (cellules/mL)') 
+nanoe_ab_mar <- plot_reg_CI(data, 'Marseille', 'Nano-eucaryotes', 'Abondance (cellules/mL)', data_piconano) 
 
 data <- read.csv("results/TS_CRY_AB_VILLEFRANCHE.csv")
-cry_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Cryptophytes', 'Abondance (cellules/mL)')
+cry_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Cryptophytes', 'Abondance (cellules/mL)', data_piconano)
 data <- read.csv("results/TS_SYN_AB_VILLEFRANCHE.csv")
-syn_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Synechococcus', 'Abondance (cellules/mL)')
+syn_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Synechococcus', 'Abondance (cellules/mL)', data_piconano)
 data <- read.csv("results/TS_PRO_AB_VILLEFRANCHE.csv")
-pro_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Prochlorococcus', 'Abondance (cellules/mL)')
+pro_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Prochlorococcus', 'Abondance (cellules/mL)', data_piconano)
 data <- read.csv("results/TS_PICOE_AB_VILLEFRANCHE.csv")
-picoe_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Pico-eucaryotes', 'Abondance (cellules/mL)')
+picoe_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Pico-eucaryotes', 'Abondance (cellules/mL)', data_piconano)
 data <- read.csv("results/TS_NANOE_AB_VILLEFRANCHE.csv")
-nanoe_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Nano-eucaryotes', 'Abondance (cellules/mL)') 
+nanoe_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Nano-eucaryotes', 'Abondance (cellules/mL)', data_piconano) 
 
 #diffusion
 data <- read.csv("results/TS_CRY_DIFF_BANYULS.csv")
@@ -370,3 +392,16 @@ ggarrange(syn_ab_ban + xlab('') + scale_y_continuous(limits=c(0, 120000)),
           picoe_ab_vil + ylab('')+ scale_y_continuous(limits=c(0, 35000)),
           ncol=3, nrow=5)
 
+###PC from CTD FPCA###
+data_CTD <- read.csv('results/DATA_PC_CTD_MARSEILLE.csv')
+ctd_mar <- reg_CI(data_CTD, site=11, variable='PC1', h=40, pilot_h=19.5, ctd=TRUE)
+#write.csv(ctd_mar, 'results/TS_PC1_CTD_MARSEILLE.csv', row.names=FALSE)
+data_CTD$DATE <- ymd(data_CTD$DATE)
+ctd_mar %>% ggplot() + 
+  geom_ribbon(aes(DATE, ymin=CI_low, ymax=CI_up), alpha=.6, fill='grey') +
+  geom_point(data=data_CTD, aes(DATE, PC1), size=.9) +
+  geom_line(aes(DATE, PC1), col=my_palette[2], size=.8) +
+  scale_y_continuous(limits=c(-50, 50)) +
+  theme_light() + ylab('PC1') + xlab('Temps') + 
+  theme(axis.text=element_text(size=16),
+        axis.title=element_text(size=18))
