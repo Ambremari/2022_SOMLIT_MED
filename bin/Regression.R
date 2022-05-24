@@ -5,7 +5,7 @@
 ################
 
 ###working directory###
-setwd("C:/Users/ambre/Dropbox/2022_stageM2_COUTEYEN/2022_SOMLIT_MED")
+setwd("C:/Users/precym-guest/Dropbox/2022_stageM2_COUTEYEN/2022_SOMLIT_MED")
 
 ###packages### 
 library(tidyverse)
@@ -394,14 +394,35 @@ ggarrange(syn_ab_ban + xlab('') + scale_y_continuous(limits=c(0, 120000)),
 
 ###PC from CTD FPCA###
 data_CTD <- read.csv('results/DATA_PC_CTD_MARSEILLE.csv')
-ctd_mar <- reg_CI(data_CTD, site=11, variable='PC1', h=40, pilot_h=19.5, ctd=TRUE)
+#ctd_mar <- reg_CI(data_CTD, site=11, variable='PC1', h=40, pilot_h=19.5, ctd=TRUE)
 #write.csv(ctd_mar, 'results/TS_PC1_CTD_MARSEILLE.csv', row.names=FALSE)
 data_CTD$DATE <- ymd(data_CTD$DATE)
-ctd_mar %>% ggplot() + 
+date_range <- ymd(c('1995-01-01', '2022-01-01'))
+ctd_mar <- read.csv('results/TS_PC1_CTD_MARSEILLE.csv')
+ctd_mar$DATE <- ymd(ctd_mar$DATE)
+#ctd_mar2 <- reg_CI(data_CTD, site=11, variable='PC2', h=40, pilot_h=19.5, ctd=TRUE)
+#write.csv(ctd_mar2, 'results/TS_PC2_CTD_MARSEILLE.csv', row.names=FALSE)
+ctd_mar2 <- read.csv('results/TS_PC2_CTD_MARSEILLE.csv')
+ctd_mar2$DATE <- ymd(ctd_mar2$DATE)
+A <- ctd_mar %>% ggplot() + 
   geom_ribbon(aes(DATE, ymin=CI_low, ymax=CI_up), alpha=.6, fill='grey') +
   geom_point(data=data_CTD, aes(DATE, PC1), size=.9) +
   geom_line(aes(DATE, PC1), col=my_palette[2], size=.8) +
   scale_y_continuous(limits=c(-50, 50)) +
+  scale_x_date(limits=date_range, 
+               breaks=seq.Date(ymd("1995-01-01"), ymd("2022-01-01"), by='2 year'),
+               labels=seq(1995, 2022, 2)) +
+  theme_light() + ylab('PC1') + xlab('Temps') + 
+  theme(axis.text=element_text(size=16),
+        axis.title=element_text(size=18))
+B <- ctd_mar2 %>% ggplot() + 
+  geom_ribbon(aes(DATE, ymin=CI_low, ymax=CI_up), alpha=.6, fill='grey') +
+  geom_point(data=data_CTD, aes(DATE, PC1), size=.9) +
+  geom_line(aes(DATE, PC1), col=my_palette[2], size=.8) +
+  scale_y_continuous(limits=c(-30, 50)) +
+  scale_x_date(limits=date_range, 
+               breaks=seq.Date(ymd("1995-01-01"), ymd("2022-01-01"), by='2 year'),
+               labels=seq(1995, 2022, 2)) +
   theme_light() + ylab('PC1') + xlab('Temps') + 
   theme(axis.text=element_text(size=16),
         axis.title=element_text(size=18))

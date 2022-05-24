@@ -42,29 +42,30 @@ my_cca <- function(data1, data2, variable){
   var_df <- data.frame('VAR'=my_var, 'X'=x_var, 'Y'=y_var)
   
   ind_plot <- my_df %>% ggplot() + theme_light() +
-   geom_point(aes(CC1_x, CC2_x, col=factor(SITE)), size=2.5) +
+   geom_point(aes(CC1_x, CC2_x, col=factor(SITE)), size=3.5) +
    scale_color_manual(values=my_palette[2:4], name='Site') +
    geom_vline(xintercept=0, linetype='dashed') +
    geom_hline(yintercept=0, linetype='dashed') +
     ggtitle(variable) +
    xlab(paste('CC1', cor1)) + ylab(paste('CC2', cor2)) + 
-    theme(legend.text = element_text(size=13),
-          legend.title = element_text(size=14),
-          axis.text=element_text(size=12),
-          axis.title=element_text(size=14),
-          legend.position='bottom')
+    theme(legend.text = element_text(size=18),
+          legend.title = element_text(size=18),
+          axis.text=element_text(size=16),
+          axis.title=element_text(size=18),
+          legend.position='bottom',
+          title=element_text(size=16))
   var_plot <- var_df %>% ggplot() + theme_light() +
    geom_point(aes(X, Y), shape=c(rep(16, 5), rep(2, 5)), size=2.5) +
    geom_text(aes(X, Y, label=VAR), col=c(rep(my_palette[2], 5), rep(my_palette[3], 5)), 
-            vjust=1.5) +
+            vjust=1.5, size=6) +
    geom_segment(data=var_df[1:5,], aes(x=0, y=0, xend=X, yend=Y)) +
     geom_vline(xintercept=0, linetype='dashed') +
     geom_hline(yintercept=0, linetype='dashed') +
     xlab(paste('CC1', cor1)) + ylab(paste('CC2', cor2)) + 
-    theme(legend.text = element_text(size=13),
-          legend.title = element_text(size=14),
-          axis.text=element_text(size=12),
-          axis.title=element_text(size=14))
+    theme(legend.text = element_text(size=16),
+          legend.title = element_text(size=16),
+          axis.text=element_text(size=16),
+          axis.title=element_text(size=18))
   return(list('var_plot'=var_plot, 'ind_plot'=ind_plot))
 }
 

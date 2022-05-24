@@ -149,26 +149,36 @@ my_fpca <- function(y_mat, all_info, variable, sp=NULL, year_lab=FALSE, nutri=FA
     geom_path(data=df_pcn1, aes(xx, yhat), cex=1, col=my_palette[2], linetype='dashed') +
     theme_light() + ylab(variable) + xlab('Temps') +
     scale_x_continuous(breaks = 1:12, labels=mois) +
-    ggtitle(paste('PC1', pc1_pi, '%'))
+    ggtitle(paste('PC1', pc1_pi, '%'))+
+    theme(axis.text=element_text(size=16),
+          axis.title=element_text(size=18),
+          title=element_text(size=15))
   B <- ggplot() + geom_path(data=df_mean, aes(xx, yhat), cex=1) +
     geom_point(data=df_pcp2, aes(xx, yhat), cex=1, col=my_palette[1], shape=3) +
     geom_path(data=df_pcn2, aes(xx, yhat), cex=1, col=my_palette[2], linetype='dashed') +
     theme_light() + ylab(variable) + xlab('Temps') +
     scale_x_continuous(breaks = 1:12, labels=mois) +
-    ggtitle(paste('PC2', pc2_pi, '%'))
+    ggtitle(paste('PC2', pc2_pi, '%'))+
+    theme(axis.text=element_text(size=16),
+          axis.title=element_text(size=18),
+          title=element_text(size=15))
   C <- ggplot() + geom_path(data=df_mean, aes(xx, yhat), cex=1) +
     geom_point(data=df_pcp3, aes(xx, yhat), cex=1, col=my_palette[1], shape=3) +
     geom_path(data=df_pcn3, aes(xx, yhat), cex=1, col=my_palette[2], linetype='dashed') +
     theme_light() + ylab(variable) + xlab('Temps') +
     scale_x_continuous(breaks = 1:12, labels=mois) +
-    ggtitle(paste('PC3', pc3_pi, '%'))
+    ggtitle(paste('PC3', pc3_pi, '%'))+
+    theme(axis.text=element_text(size=16),
+          axis.title=element_text(size=18),
+          title=element_text(size=15))
   plot_pert <- ggarrange(A,B, C, ncol=1, nrow=3)
   ##Components scores
   df_pc <- data.frame('PC1'=facp$xiEst[,1], 
                       'PC2'=facp$xiEst[,2], 
                       'PC3'=facp$xiEst[,3])
   my_df <- cbind(df_pc, all_info)
-  my_df$SITE <- factor(my_df$SITE, 
+  my_df$SITE <- factor(my_df$SITE,
+                       levels=c(10, 11, 12),
                        labels=c('Banyuls', 'Marseille', 'Villefranche'))
   my_df$GROUPE <- factor(my_df$GROUPE, 
                          levels=sp_name$code,
@@ -181,10 +191,11 @@ my_fpca <- function(y_mat, all_info, variable, sp=NULL, year_lab=FALSE, nutri=FA
     xlab(paste('PC1', pc1_pi, '%')) +
     ylab(paste('PC2', pc2_pi, '%')) +
     scale_color_manual(values=my_palette[2:4], name='Site') +
-    theme(legend.text = element_text(size=13),
-          legend.title = element_text(size=14),
-          axis.text=element_text(size=12),
-          axis.title=element_text(size=14))
+    theme(legend.text = element_text(size=16),
+          legend.title = element_text(size=18),
+          axis.text=element_text(size=16),
+          axis.title=element_text(size=18),
+          title=element_text(size=18))
   if(length(sp)==1){
     solo <- unique(my_df$GROUPE)
     plot_score <- plot_score + 

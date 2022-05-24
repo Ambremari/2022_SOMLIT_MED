@@ -95,17 +95,18 @@ my_fda <- function(data, weights, N, variable, nutri=FALSE){
     theme_light() +
     geom_point(data=grav_center, aes(LD1, LD2, col=factor(SITE)), shape=3) +
     geom_text(data=grav_center, aes(LD1, LD2, col=factor(SITE), label=SITE),
-              fontface='bold', size=4.5, vjust=1, hjust=1) +
+              fontface='bold', size=6, vjust=1, hjust=1) +
     geom_segment(data=ban, aes(g1[1], g1[2], xend=LD1, yend=LD2, col=factor(SITE))) +
     geom_segment(data=mar, aes(g2[1], g2[2], xend=LD1, yend=LD2, col=factor(SITE))) +
     geom_segment(data=vil, aes(g3[1], g3[2], xend=LD1, yend=LD2, col=factor(SITE))) +
     scale_color_manual(values=my_palette[2:4], name='Site') +
     xlab(paste('Axe 1 ', p_axe1, '%')) + ylab(paste('Axe 2 ', p_axe2, '%')) + ggtitle(variable)+
-    theme(legend.text = element_text(size=13),
+    theme(legend.text = element_text(size=16),
           legend.position='none',
-          legend.title = element_text(size=14),
-          axis.text=element_text(size=12),
-          axis.title=element_text(size=14))
+          legend.title = element_text(size=18),
+          axis.text=element_text(size=16),
+          axis.title=element_text(size=18),
+          title=element_text(size=18))
   coord <- data.frame('VAR'=row.names(coord.var), coord.var)
   coord <- coord %>% separate('VAR', c('PC', 'GROUPE'), '_')
   leg_name <- 'Groupe'
@@ -121,11 +122,12 @@ my_fda <- function(data, weights, N, variable, nutri=FALSE){
     geom_label(aes(LD1, LD2, label=PC, fill=GROUPE),
                size=4.5, fontface='bold', alpha=.8, col='white') +
     theme_light() + xlab(paste('Axe 1 ', p_axe1, '%')) + ylab(paste('Axe 2 ', p_axe2, '%')) + ggtitle(variable) +
-    scale_fill_manual(values=my_palette[1:5], name=leg_name) + 
+    scale_fill_manual(values=my_palette[1:5], name='') + 
     theme(legend.text = element_text(size=13),
-          legend.title = element_text(size=14),
-          axis.text=element_text(size=12),
-          axis.title=element_text(size=14))
+          legend.title = element_text(size=15),
+          axis.text=element_text(size=16),
+          axis.title=element_text(size=18),
+          title=element_text(size=18))
   return(list(acp=acp_plot, var=var_plot, data=my_df))
 }
 

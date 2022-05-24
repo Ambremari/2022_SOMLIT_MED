@@ -83,6 +83,7 @@ my_fpca <- function(y_mat, all_info, variable, sp=NULL, year_lab=FALSE, nutri=FA
   n_points <- nrow(y_mat)
   n_curves <- ncol(y_mat)
   arg_time <- seq(1, 12, 1)
+  n_basis <- ceiling(arg_time/2)
   argvals <- matrix(arg_time, nrow=n_points, ncol=n_curves)
   #normalisation
   if(norm==TRUE){
@@ -90,7 +91,7 @@ my_fpca <- function(y_mat, all_info, variable, sp=NULL, year_lab=FALSE, nutri=FA
   y_mat <- sweep(y_mat, 2, sum_mat, FUN="/")
   }
   #create basis
-  basis <- create.bspline.basis(c(1, 12), breaks=arg_time, norder=4)
+  basis <- create.bspline.basis(c(1, 12), nbasis=n_basis, norder=4)
   l_use <- 1e-4 #lambda
   #select sp
   if(is.null(sp)==FALSE){

@@ -62,13 +62,11 @@ pre_fpca <- function(data, pmin=0.5, pmax=55, l_use){
           axis.title=element_text(size=18))
   W.obj <- Data2fd(argvals = argvals, y = y_mat, basisobj = basis, lambda = l_use)
   label <- unique(all_temp$DATE)
-  return(list(plot= l_test, W.obj=W.obj, dates=label))
+  return(list(plot= l_test, W.obj=W.obj, dates=label, basis=basis))
 }
 
 ###FPCA, MEAN PERTURBATION PLOT, SCORE PLOT###
-my_fpca <- function(W.obj, label, id_site, pmin=0.5, pmax=50){
-  n_points <- nrow(y_mat)
-  n_curves <- ncol(y_mat)
+my_fpca <- function(W.obj, basis, label, id_site, pmin=0.5, pmax=50){
   ##FACP
   facp <- pca.fd(fdobj = W.obj, nharm=5)
   ##Components indertia
@@ -82,7 +80,7 @@ my_fpca <- function(W.obj, label, id_site, pmin=0.5, pmax=50){
   pert_2n <- fd(basisobj=basis)
   pert_3p <- fd(basisobj=basis)
   pert_3n <- fd(basisobj=basis)
-  xx <- seq(pmin, pmax, 0.4)
+  xx <- seq(pmin, pmax, 0.7)
   mean <- mean.fd(W.obj)
   pc1 <- matrix(facp$harmonics$coefs[,1], ncol=1)
   pert_1p$coefs <- mean$coefs + sqrt(facp$values[1]) * pc1
@@ -113,7 +111,7 @@ my_fpca <- function(W.obj, label, id_site, pmin=0.5, pmax=50){
     theme(axis.text=element_text(size=16),
           axis.title=element_text(size=18),
           title = element_text(size=20))
-  plot_pert <- ggarrange(A, B, ncol=2, nrow=1)
+  plot_pert <- ggarrange(A, NULL, B, ncol=3, nrow=1, widths=c(1, .2, 1))
   df_pc <- data.frame('DATE'=label,
                       'ID_SITE'=id_site,
     'PC1'=facp$scores[,1], 
@@ -127,7 +125,35 @@ ctd_mar <- read.csv("data/CTD_MARSEILLE.csv")
 
 ###FPCA marseille###
 dat_mar <- pre_fpca(ctd_mar, l_use=1e-1)
-fpca_mar <- my_fpca(dat_mar$W.obj, dat_mar$dates, 11)
-fpca_mar$plot
+fpca_mar <- my_fpca(dat_mar$W.obj, dat_mar$basis, dat_mar$dates, 11)
+M <- ggarrange(NULL, fpca_mar$plot, NULL, ncol=3, nrow=1, widths=c(.1, 1, .1))
 export <- fpca_mar$scores
 #write.csv(export, "results/DATA_PC_CTD_MARSEILLE.csv", row.names=FALSE)
+
+export <- export %>% mutate('col1'=ifelse(PC1>0, 1, 2), 'col2'=ifelse(PC2>0, 1, 2))
+A <- export %>% ggplot() + 
+  geom_segment(aes(x=DATE, y=0, xend=DATE, yend=PC1, col=factor(col1)), size=.7) +
+  scale_x_date(limits=date_range, 
+               breaks=seq.Date(ymd("1995-01-01"), ymd("2022-01-01"), by='2 year'),
+               labels=seq(1995, 2022, 2),
+               expand=c(1e-2,1e-2)) +
+  scale_color_manual(values=my_palette, name='') +
+  theme_light() + ylab('PC1') + xlab('') + 
+  theme(axis.text=element_text(size=16),
+        axis.title=element_text(size=18),
+        legend.position='none')
+B <- export %>% ggplot() + 
+  geom_segment(aes(x=DATE, y=0, xend=DATE, yend=PC2, col=factor(col2)), size=.7) +
+  scale_x_date(limits=date_range, 
+               breaks=seq.Date(ymd("1995-01-01"), ymd("2022-01-01"), by='2 year'),
+               labels=seq(1995, 2022, 2),
+               expand=c(1e-2,1e-2)) +
+  scale_color_manual(values=my_palette, name='') +
+  theme_light() + ylab('PC2') + xlab('Temps') + 
+  theme(axis.text=element_text(size=16),
+        axis.title=element_text(size=18),
+        legend.position='none')
+
+S <- ggarrange(A, B, ncol=1, nrow=2)
+ggarrange(M, NULL, S, ncol=1, nrow=3, heights=c(1, .1, 1.1), labels=c('a)', '', 'b)'))
+
