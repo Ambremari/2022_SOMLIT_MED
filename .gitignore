@@ -16,3 +16,6 @@ img/
 *.gz
 
 bin/FDA_FPCA_fig.R
+agsmemph.bst
+*.bib
+*.png
