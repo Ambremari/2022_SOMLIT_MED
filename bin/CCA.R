@@ -29,6 +29,8 @@ my_cca <- function(data1, data2, variable, dim1, dim2){
   data <- left_join(data1, data2, by=c('ANNEE', 'SITE'))
   data1 <- data[, 3:7]
   data2 <- data[,18: 22]
+  mat <- matcor(data1, data2)
+  mat_plot <- img.matcor(mat, type = 2)
   cca <- cc(data2, data1)
   cor1 <- round(cca$cor[dim1], 3)
   cor2 <- round(cca$cor[dim2], 3)
@@ -70,13 +72,13 @@ my_cca <- function(data1, data2, variable, dim1, dim2){
           legend.title = element_text(size=16),
           axis.text=element_text(size=16),
           axis.title=element_text(size=18))
-  return(list('var_plot'=var_plot, 'ind_plot'=ind_plot, 'cor_plot'=cor_plot))
+  return(list('mat_plot'=mat_plot, 'var_plot'=var_plot, 'ind_plot'=ind_plot, 'cor_plot'=cor_plot))
 }
 
 ###CCA###
 cca_ab <- my_cca(ab, nutri, 'Abondance', 1, 2)
 ggarrange(cca_ab$ind_plot, NULL,  cca_ab$var_plot, ncol=3, nrow=1, 
           widths=c(1, .1, 1))
-cca_diff <- my_cca(diff, nutri, 'Diffusion', 1, 5)
+cca_diff <- my_cca(diff, nutri, 'Diffusion', 2, 3)
 ggarrange(cca_diff$ind_plot, NULL,  cca_diff$var_plot, ncol=3, nrow=1, 
           widths=c(1, .1, 1))
