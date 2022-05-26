@@ -40,6 +40,7 @@ my_fda <- function(data, weights, N, variable, nutri=FALSE){
   data <- data.frame("SITE"=data[,1], input)
   X <- input
   X <- t(t(X)*sqrt(weights))
+  X <- scale(X)
   n <- nrow(X)
   p <- ncol(X)
   group <- data[,1]
@@ -120,7 +121,7 @@ my_fda <- function(data, weights, N, variable, nutri=FALSE){
     geom_circle(aes(x0 = 0, y0 = 0, r = 1), inherit.aes = FALSE, 
                 size=.2, linetype='dashed', alpha=.6) +
     geom_label(aes(LD1, LD2, label=PC, fill=GROUPE),
-               size=4.5, fontface='bold', alpha=.8, col='white') +
+               size=5.5, fontface='bold', alpha=.8, col='white') +
     theme_light() + xlab(paste('Axe 1 ', p_axe1, '%')) + ylab(paste('Axe 2 ', p_axe2, '%')) + ggtitle(variable) +
     scale_fill_manual(values=my_palette[1:5], name='') + 
     theme(legend.text = element_text(size=13),
