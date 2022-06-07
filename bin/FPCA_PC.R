@@ -5,7 +5,7 @@
 ################
 
 ###working directory###
-setwd("C:/Users/precym-guest/Dropbox/2022_stageM2_COUTEYEN/2022_SOMLIT_MED")
+setwd("C:/Users/ambre/Dropbox/2022_stageM2_COUTEYEN/2022_SOMLIT_MED")
 
 ###packages### 
 library(tidyverse)

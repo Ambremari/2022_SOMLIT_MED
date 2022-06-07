@@ -5,7 +5,7 @@
 ################
 
 ###working directory###
-setwd("C:/Users/precym-guest/Dropbox/2022_stageM2_COUTEYEN/2022_SOMLIT_MED")
+setwd("C:/Users/ambre/Dropbox/2022_stageM2_COUTEYEN/2022_SOMLIT_MED")
 
 ###packages### 
 library(tidyverse)
@@ -62,7 +62,7 @@ pre_fpca <- function(data, pmin=0.5, pmax=55, l_use){
           axis.title=element_text(size=18))
   W.obj <- Data2fd(argvals = argvals, y = y_mat, basisobj = basis, lambda = l_use)
   label <- unique(all_temp$DATE)
-  return(list(plot= l_test, W.obj=W.obj, dates=label, basis=basis))
+  return(list(plot= l_test, W.obj=W.obj, dates=label, basis=basis, df_test=df_all, pt_test=original))
 }
 
 ###FPCA, MEAN PERTURBATION PLOT, SCORE PLOT###
@@ -131,6 +131,7 @@ export <- fpca_mar$scores
 #write.csv(export, "results/DATA_PC_CTD_MARSEILLE.csv", row.names=FALSE)
 
 export <- export %>% mutate('col1'=ifelse(PC1>0, 1, 2), 'col2'=ifelse(PC2>0, 1, 2))
+date_range <- ymd(c("1995-01-01", "2022-01-01"))
 A <- export %>% ggplot() + 
   geom_segment(aes(x=DATE, y=0, xend=DATE, yend=PC1, col=factor(col1)), size=.7) +
   scale_x_date(limits=date_range, 

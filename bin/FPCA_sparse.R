@@ -5,7 +5,7 @@
 ################
 
 ###working directory###
-setwd("C:/Users/precym-guest/Dropbox/2022_stageM2_COUTEYEN/2022_SOMLIT_MED")
+setwd("C:/Users/ambre/Dropbox/2022_stageM2_COUTEYEN/2022_SOMLIT_MED")
 
 ###packages### 
 library(tidyverse)
@@ -366,4 +366,27 @@ export_fpca_diff <- export_fpca_diff %>%
 
 #write.csv(diff_weight, "results/PC_DIFF_WEIGHTS.csv", row.names=FALSE)
 #write.csv(export_fpca_diff, "results/PC_DIFF.csv", row.names=FALSE)
+
+##data diff pc###
+pc_diff <- read.csv('results/PC_DIFF.csv')
+pc_diff <- pc_diff[,1:7]
+means <- apply(pc_diff[,3:7], 2, mean, na.rm=TRUE)
+pc_diff[,3:7] <- sweep(pc_diff[,3:7], 2, Mod(means), FUN='/')
+pc_diff <- pivot_longer(pc_diff, 3:7, names_to='GROUPE', values_to='PC1')
+pc_diff %>% ggplot(aes(ANNEE, PC1)) + 
+  geom_point(aes(col=GROUPE, shape=SITE)) +
+  geom_path(aes(col=GROUPE, linetype=SITE)) +
+  geom_hline(yintercept=0, linetype='twodash') +
+  theme_light() +
+  scale_shape(name='Site') +
+  scale_linetype(name='Site') +
+  xlab('Temps') +
+  scale_color_manual(values=my_palette, 
+                     name='Groupe',
+                     labels=c('Cryptophytes', 'Nano-eucaryotes', 'Pico-eucaryotes',
+                              'Prochlorococcus', 'Synechococcus')) +
+  theme(legend.text = element_text(size=16),
+        legend.title = element_text(size=16),
+        axis.text=element_text(size=16),
+        axis.title=element_text(size=18))
 

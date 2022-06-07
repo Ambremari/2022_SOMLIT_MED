@@ -53,21 +53,21 @@ plot_period <- function(data, variable, site, var_name, sp=NULL, k=c(1,1), tp=0.
   }
   CI_up <- 2*Lh*fun_per(Roots)/U
   CI_low <- 2*Lh*fun_per(Roots)/L
-  par(mfrow=c(2,1), mar=c(3,2.1,1.5,0.5), mgp=c(1.2,0.5,0), cex.lab=.8, cex.axis=.7)
+  par(mar=c(5,5,5,0.5), mgp=c(3,1,0), cex.lab=2.5, cex.axis=2, cex.main=3)
   plot.new()
   grid(lty=1)
   par(new=TRUE)
-  plot(freq, Per, type='o', xlab='Fréquence', 
-       ylab='Périodogramme', lwd=1, xlim=c(0,5),
-       main=paste(site, "-", var_name, sp), cex.main=0.9, cex.lab=0.9)
+  plot(freq, Per, type='o', xlab='FrÃ©quence', 
+       ylab='PÃ©riodogramme', lwd=1, xlim=c(0,5),
+       main=paste(site, "-", var_name, sp))
   plot.new()
   grid(lty=1)
   par(new=TRUE)
   plot(my_per$freq, my_per$spec, type='l', xlim=c(0,5), 
-       xlab='Fréquence', ylab='Périodogramme moyen', 
-       main=paste("fenêtre = ", bdw), cex.main=0.9, cex.lab=0.9)
+       xlab='FrÃ©quence', ylab='PÃ©riodogramme moyen', 
+       main=paste("fenÃªtre = ", bdw))
   abline(h=CI_low, lty=2, col=2:(K+1))
-  legend("topright", lty=2, legend = Roots, col=2:(K+1))
+  legend("topright", lty=2, legend = Roots, col=2:(K+1), cex=2)
   }
 
 
@@ -78,7 +78,7 @@ my_mstl <- function(data, variable, frequency, seasons, sw, tw){
   my_ts <- msts(var, seasonal.periods=seasons,
                 ts.frequency=frequency, start=my_start)
   fit <- mstl(my_ts, 
-              s.window=sw, t.window=tw, iterate=2, robust=TRUE) 
+              s.window=sw, t.window=tw, iterate=2) 
   
   fit_df <- cbind(as.data.frame(fit), "DATE"=ymd(data$DATE))
   all_seas <- NULL
@@ -130,7 +130,7 @@ plot_decomp <- function(res, fit_df, seasons, site, variable, sp=NULL){
   seasons <- sort(seasons)
   nS <- length(seasons)
   end <- ncol(fit_df)
-  my_range <- round(max(fit_df$Remainder), 3)-0.01
+  my_range <- round(max(fit_df$Remainder), 3)
   plot_fit <- fit_df %>% pivot_longer(c(1:(3+nS),end), 
                                       names_to="key",
                                       values_to="value")
@@ -146,10 +146,10 @@ plot_decomp <- function(res, fit_df, seasons, site, variable, sp=NULL){
                          levels=c("Data", "Trend", 
                                   lev_seas, 
                                   "Remainder", "Predict"),
-                         labels=c("Données",
+                         labels=c("DonnÃ©es",
                                   "Tendance",
                                   lab_seas,
-                                  "Résidus", "Prédiction"))
+                                  "RÃ©sidus", "PrÃ©diction"))
   center <- plot_fit %>% group_by(key) %>% summarise("m"=min(value), "M"=max(value), "C"=(m+M)/2)
   scale <- data.frame("x1"=rep(ymd("2011-10-01"), length(levels(plot_fit$key))), 
                       "y1"=center$C-my_range, 
@@ -165,37 +165,51 @@ plot_decomp <- function(res, fit_df, seasons, site, variable, sp=NULL){
                strip.position = "left") +
     geom_segment(data=scale, aes(x=x1, xend=x1, y=y1, yend=y2),
                  size=3, lineend='square', col='gray60')+
-    theme(legend.position="none") +
+    theme(legend.position="none",
+          strip.text.y = element_text(size = 20),
+          axis.text=element_text(size=20),
+          axis.title=element_text(size=20),
+          title=element_text(size=18)) +
     ylab(paste("log(", variable, ")", sep="")) + xlab('Temps') +
     ggtitle(paste(sp, "-", site))
   #residual plot
   res$DATE <- ymd(res$DATE)
   new_res <- res %>% ggplot(aes(x=DATE, xend=DATE, y=0, yend=RES)) + 
     geom_segment(col=my_palette[6], size=.7) +
-    theme_light() + ylab("Résidus décorrélés") + xlab('Temps')
+    theme_light() + ylab("RÃ©sidus dÃ©corrÃ©lÃ©s") + xlab('Temps') +
+    theme(axis.text=element_text(size=20),
+          axis.title=element_text(size=20),
+          title=element_text(size=18))
   #residual acf
   n <- nrow(res)
-  my_sd <- sd(res$RES)
-  x <- seq(min(res$RES), max(res$RES), 1e-3)
+  my_sd <- sd(fit_df$Remainder)
+  x <- seq(min(fit_df$Remainder), max(fit_df$Remainder), 1e-4)
   y <- dnorm(x, sd=my_sd)
   df <- data.frame(x, y)
   ACF <- ggAcf(res$RES, lag.max=n) + theme_light() + 
-    scale_y_continuous(limits=c(-0.2, 0.5)) + ggtitle("ACF des résidus")
-  HIST <- forecast::gghistogram(res$RES) + theme_light() + xlab("Résidus") + 
+    scale_y_continuous(limits=c(-0.2, 0.5)) + 
+    ggtitle("ACF des rÃ©sidus linÃ©airement dÃ©corrÃ©lÃ©s") +
+    theme(axis.text=element_text(size=20),
+          axis.title=element_text(size=20),
+          title=element_text(size=18))
+  HIST <- forecast::gghistogram(fit_df$Remainder) + theme_light() + xlab("RÃ©sidus") + 
     geom_line(data=df, aes(x, y), col=my_palette[2], size=1) + 
-    ylab('Compte') + ggtitle("Histogramme des résidus")
+    ylab('Compte') + ggtitle("Histogramme des rÃ©sidus") +
+    theme(axis.text=element_text(size=20),
+          axis.title=element_text(size=20),
+          title=element_text(size=18))
   #combine all plots
-  res_plot <- ggarrange(NULL, new_res, ACF, HIST, NULL, nrow=5, ncol=1, heights=c(0.5, 1, 1, 1.2, 0.5))
+  res_plot <- ggarrange(NULL, new_res, ACF, NULL, HIST, NULL, nrow=6, ncol=1, heights=c(0.2, 1, 1, 0.2, 1.2, 0.2))
   my_plot <- ggarrange(decomp, NULL, res_plot, ncol=3, widths=c(1.5, 0.1, 1))
   return(my_plot)
 }
   
 data <- read.csv("results/TS_SYN_AB_BANYULS.csv")
 plot_period(data, 'ABONDANCE', 'Banyuls', 'Abondance', 'Synechococcus', K=3)
-fit <- my_mstl(data, 'ABONDANCE', 365, c(360, 185), c(11, 17), 17)
+fit <- my_mstl(data, 'ABONDANCE', 365, c(362, 183), c(11, 19), 17)
 plot_cor(fit)
 res <- res_decor(fit, 11)
 x11()
-plot_decomp(res, fit, 352, 'Banyuls', 'Abondance', 'Synechococcus')
+plot_decomp(res, fit, c(362, 183), 'Banyuls', 'Abondance', 'Synechococcus')
 x11()
-plot(fit$Seasonal352 + fit$Remainder, type='l')
+plot(fit$Seasonal362 + fit$Seasonal183, type='l')

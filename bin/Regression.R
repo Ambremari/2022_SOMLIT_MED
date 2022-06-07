@@ -111,8 +111,9 @@ plot_reg_CI <- function(data, site, group=NULL, variable, my_points, var_points=
     geom_line(aes(DATE, VARIABLE), col=my_palette[2], size=.8) +
     theme_light() + ylab(variable) + xlab('Temps') + 
     ggtitle(paste(site, group, sep=" - ")) +
-    theme(axis.text=element_text(size=16),
-          axis.title=element_text(size=18))
+    theme(axis.text=element_text(size=20),
+          axis.title=element_text(size=20),
+          title=element_text(size=16))
   if(is.null(group)==FALSE){
     my_plot <- my_plot +
       geom_point(data=my_points, aes_string('DATE', var_points), size=.9) +
@@ -121,9 +122,13 @@ plot_reg_CI <- function(data, site, group=NULL, variable, my_points, var_points=
   return(my_plot)
 }
 
+###load data###
+data_piconano <- read.csv("data/PICONANO_AB.csv")
+data_piconano_diff <- read.csv("data/PICONANO_DIFF.csv")
+data_hydro <- read.csv("data/HYDRO.csv")
+
 ###compute regression###
 ###ABUNDANCE
-data_piconano <- read.csv("data/PICONANO_AB.csv")
 ##BANYULS
 #export <- reg_CI(data_piconano, site=10, group='CRYC', variable='ABONDANCE', h=40, pilot_h=25)
 #write.csv(export, "results/cry_ab_banyuls.csv", row.names=FALSE)
@@ -161,7 +166,6 @@ data_piconano <- read.csv("data/PICONANO_AB.csv")
 #write.csv(export, "results/nanoe_ab_villefranche.csv", row.names=FALSE)
 
 ###DIFFUSION
-data_piconano <- read.csv("data/PICONANO_DIFF.csv")
 ##BANYULS
 #export <- reg_CI(data_piconano, site=10, group='CRYSSC', variable='DIFFUSION', h=40, pilot_h=23)
 #write.csv(export, "results/cry_diff_banyuls.csv", row.names=FALSE)
@@ -200,7 +204,6 @@ data_piconano <- read.csv("data/PICONANO_DIFF.csv")
 
 
 ###NUTRIENTS
-data_hydro <- read.csv("data/HYDRO.csv")
 ##BANYULS
 #export <- reg_CI(data_hydro, site=10, variable='NH4', h=40, pilot_h=21, start='2011-09-01')
 #write.csv(export, "results/nh4_banyuls.csv", row.names=FALSE)
@@ -256,41 +259,41 @@ data_hydro <- read.csv("data/HYDRO.csv")
 ###plot regression###
 #abundance 
 data <- read.csv("results/TS_CRY_AB_BANYULS.csv")
-cry_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Cryptophytes', 'Abondance (cellules/mL)', data_piconano)
+cry_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Cryptophytes', 'Abondance', data_piconano)
 data <- read.csv("results/TS_SYN_AB_BANYULS.csv")
-syn_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Synechococcus', 'Abondance (cellules/mL)', data_piconano)
+syn_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Synechococcus', 'Abondance', data_piconano)
 data <- read.csv("results/TS_PRO_AB_BANYULS.csv")
-pro_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Prochlorococcus', 'Abondance (cellules/mL)', data_piconano) + 
+pro_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Prochlorococcus', 'Abondance', data_piconano) + 
   scale_y_continuous(limits=c(-1, 3e4))
 data <- read.csv("results/TS_PICOE_AB_BANYULS.csv")
-picoe_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Pico-eucaryotes', 'Abondance (cellules/mL)', data_piconano) + 
+picoe_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Pico-eucaryotes', 'Abondance', data_piconano) + 
   scale_y_continuous(limits=c(-1, 3e4))
 data <- read.csv("results/TS_NANOE_AB_BANYULS.csv")
-nanoe_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Nano-eucaryotes', 'Abondance (cellules/mL)', data_piconano) +  
+nanoe_ab_ban <- plot_reg_CI(data, 'Banyuls', 'Nano-eucaryotes', 'Abondance', data_piconano) +  
   scale_y_continuous(limits=c(-1, 6e3))
 
 data <- read.csv("results/TS_CRY_AB_MARSEILLE.csv")
-cry_ab_mar <- plot_reg_CI(data, 'Marseille', 'Cryptophytes', 'Abondance (cellules/mL)', data_piconano) + 
+cry_ab_mar <- plot_reg_CI(data, 'Marseille', 'Cryptophytes', 'Abondance', data_piconano) + 
   scale_y_continuous(limits=c(-1, 1.2e3))
 data <- read.csv("results/TS_SYN_AB_MARSEILLE.csv")
-syn_ab_mar <- plot_reg_CI(data, 'Marseille', 'Synechococcus', 'Abondance (cellules/mL)', data_piconano)
+syn_ab_mar <- plot_reg_CI(data, 'Marseille', 'Synechococcus', 'Abondance', data_piconano)
 data <- read.csv("results/TS_PRO_AB_MARSEILLE.csv")
-pro_ab_mar <- plot_reg_CI(data, 'Marseille', 'Prochlorococcus', 'Abondance (cellules/mL)', data_piconano)
+pro_ab_mar <- plot_reg_CI(data, 'Marseille', 'Prochlorococcus', 'Abondance', data_piconano)
 data <- read.csv("results/TS_PICOE_AB_MARSEILLE.csv")
-picoe_ab_mar <- plot_reg_CI(data, 'Marseille', 'Pico-eucaryotes', 'Abondance (cellules/mL)', data_piconano)
+picoe_ab_mar <- plot_reg_CI(data, 'Marseille', 'Pico-eucaryotes', 'Abondance', data_piconano)
 data <- read.csv("results/TS_NANOE_AB_MARSEILLE.csv")
-nanoe_ab_mar <- plot_reg_CI(data, 'Marseille', 'Nano-eucaryotes', 'Abondance (cellules/mL)', data_piconano) 
+nanoe_ab_mar <- plot_reg_CI(data, 'Marseille', 'Nano-eucaryotes', 'Abondance', data_piconano) 
 
 data <- read.csv("results/TS_CRY_AB_VILLEFRANCHE.csv")
-cry_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Cryptophytes', 'Abondance (cellules/mL)', data_piconano)
+cry_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Cryptophytes', 'Abondance', data_piconano)
 data <- read.csv("results/TS_SYN_AB_VILLEFRANCHE.csv")
-syn_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Synechococcus', 'Abondance (cellules/mL)', data_piconano)
+syn_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Synechococcus', 'Abondance', data_piconano)
 data <- read.csv("results/TS_PRO_AB_VILLEFRANCHE.csv")
-pro_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Prochlorococcus', 'Abondance (cellules/mL)', data_piconano)
+pro_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Prochlorococcus', 'Abondance', data_piconano)
 data <- read.csv("results/TS_PICOE_AB_VILLEFRANCHE.csv")
-picoe_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Pico-eucaryotes', 'Abondance (cellules/mL)', data_piconano)
+picoe_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Pico-eucaryotes', 'Abondance', data_piconano)
 data <- read.csv("results/TS_NANOE_AB_VILLEFRANCHE.csv")
-nanoe_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Nano-eucaryotes', 'Abondance (cellules/mL)', data_piconano) 
+nanoe_ab_vil <- plot_reg_CI(data, 'Villefranche', 'Nano-eucaryotes', 'Abondance', data_piconano) 
 
 #diffusion
 data <- read.csv("results/TS_CRY_DIFF_BANYULS.csv")
@@ -375,15 +378,15 @@ chla_mar <- plot_reg_CI(data, 'Marseille', 'Chlorophylle a', TeX('Concentration 
 data <- read.csv("results/chla_villefranche.csv")
 chla_vil <- plot_reg_CI(data, 'Villefranche', 'Chlorophylle a', TeX('Concentration $(\\mu g/L)$'))
 
-ggarrange(syn_ab_ban + xlab('') + scale_y_continuous(limits=c(0, 120000)), 
-          syn_ab_mar + ylab('') + xlab('') + scale_y_continuous(limits=c(0, 120000)),
-          syn_ab_vil + ylab('') + xlab('')+ scale_y_continuous(limits=c(0, 120000)),
+ggarrange(syn_ab_ban + xlab('') + scale_y_continuous(limits=c(0, 120000), breaks=seq(0, 120000, length.out=4)), 
+          syn_ab_mar + ylab('') + xlab('') + scale_y_continuous(limits=c(0, 120000), breaks=seq(0, 120000, length.out=4)),
+          syn_ab_vil + ylab('') + xlab('')+ scale_y_continuous(limits=c(0, 120000), breaks=seq(0, 120000, length.out=4)),
           cry_ab_ban + xlab('') + scale_y_continuous(limits=c(0, 1250)),
           cry_ab_mar + ylab('') + xlab('')+ scale_y_continuous(limits=c(0, 1250)),
           cry_ab_vil  + xlab('')+ ylab('')+ scale_y_continuous(limits=c(0, 1250)),
-          pro_ab_ban + xlab('')+ scale_y_continuous(limits=c(0, 45000)),
-          pro_ab_mar + ylab('') + xlab('')+ scale_y_continuous(limits=c(0, 45000)),
-          pro_ab_vil +  xlab('')+ ylab('')+ scale_y_continuous(limits=c(0, 45000)),
+          pro_ab_ban + xlab('')+ scale_y_continuous(limits=c(0, 45000), breaks=seq(0, 45000, length.out=4)),
+          pro_ab_mar + ylab('') + xlab('')+ scale_y_continuous(limits=c(0, 45000), breaks=seq(0, 45000, length.out=4)),
+          pro_ab_vil +  xlab('')+ ylab('')+ scale_y_continuous(limits=c(0, 45000), breaks=seq(0, 45000, length.out=4)),
           nanoe_ab_ban + xlab('')+ scale_y_continuous(limits=c(0, 7000)),
           nanoe_ab_mar + xlab('') + ylab('')+ scale_y_continuous(limits=c(0, 7000)),
           nanoe_ab_vil  + xlab('') + ylab('')+ scale_y_continuous(limits=c(0, 7000)),
@@ -391,6 +394,18 @@ ggarrange(syn_ab_ban + xlab('') + scale_y_continuous(limits=c(0, 120000)),
           picoe_ab_mar + ylab('')+ scale_y_continuous(limits=c(0, 35000)),
           picoe_ab_vil + ylab('')+ scale_y_continuous(limits=c(0, 35000)),
           ncol=3, nrow=5)
+
+ggarrange(syn_ab_ban + xlab('') + scale_y_continuous(limits=c(0, 120000), breaks=seq(0, 120000, length.out=4)), 
+          syn_ab_mar + ylab('') + xlab('') + scale_y_continuous(limits=c(0, 120000), breaks=seq(0, 120000, length.out=4)),
+          syn_ab_vil + ylab('') + xlab('')+ scale_y_continuous(limits=c(0, 120000), breaks=seq(0, 120000, length.out=4)),
+          cry_ab_ban + xlab('') + scale_y_continuous(limits=c(0, 1250)),
+          cry_ab_mar + ylab('') + xlab('')+ scale_y_continuous(limits=c(0, 1250)),
+          cry_ab_vil  + xlab('')+ ylab('')+ scale_y_continuous(limits=c(0, 1250)),
+          pro_ab_ban +  scale_y_continuous(limits=c(0, 45000), breaks=seq(0, 45000, length.out=4)),
+          pro_ab_mar + ylab('') +  scale_y_continuous(limits=c(0, 45000), breaks=seq(0, 45000, length.out=4)),
+          pro_ab_vil +   ylab('')+ scale_y_continuous(limits=c(0, 45000), breaks=seq(0, 45000, length.out=4)),
+          ncol=3, nrow=3)
+          
 
 ###PC from CTD FPCA###
 data_CTD <- read.csv('results/DATA_PC_CTD_MARSEILLE.csv')
